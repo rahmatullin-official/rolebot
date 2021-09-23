@@ -43,7 +43,7 @@ def bot_message(message):
             add_user_role(button3, message)
         elif message.text == button4:
             add_user_role(button4, message)
-        elif message.text ==git a button5:
+        elif message.text == button5:
             show_my_roles(message)
         elif message.text == button6:
             clear_my_roles(message)
