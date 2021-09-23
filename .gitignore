@@ -1,7 +1,7 @@
 .idea
 Lib
 Scripts
-pyvenv.cfg
 config.py
+pyvenv.cfg
 all_users.db
 
