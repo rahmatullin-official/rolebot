@@ -1,7 +1,8 @@
 import telebot
 from telebot import types
 import sqlite3
-from config import token, item1, item2, item3, item4, item5, item6, button1, button2, button3, button4, button5, button6
+from config import token, item1, item2, item3, item4, item5, item6, item11, item22, item33, button1, button2, button3, \
+    button4, button5, button6, button11, button22, button33, item7, button7, help_commands
 
 bot = telebot.TeleBot(token)
 
@@ -10,10 +11,10 @@ bot = telebot.TeleBot(token)
 def start(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
-    markup.add(item1, item2, item3, item4, item5, item6)
+    markup.add(item11, item22, item33)
 
     bot.send_message(message.chat.id,
-                     "Здравсвуйте {0.first_name}! Выберите пожалуйста свою роль".format(message.from_user),
+                     "Здравсвуйте {0.first_name}!".format(message.from_user),
                      reply_markup=markup)
     new_user_add(message)
 
@@ -21,18 +22,43 @@ def start(message):
 @bot.message_handler(content_types=['text'])
 def bot_message(message):
     if message.chat.type == 'private':
-        if message.text == button1:
-            add_user_role(button1, message)
-        elif message.text == button2:
-            add_user_role(button2, message)
-        elif message.text == button3:
-            add_user_role(button3, message)
-        elif message.text == button4:
-            add_user_role(button4, message)
-        elif message.text == button5:
-            show_my_roles(message)
-        elif message.text == button6:
-            clear_my_roles(message)
+        if message.text == button11 or message.text == button1 or message.text == button2 or message.text == button3 \
+                or message.text == button4 or message.text == button7:
+            if message.text == button11:
+                markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+                markup.add(item1, item2, item3, item4, item7)
+                bot.send_message(message.chat.id,
+                                 "{0.first_name}, выберите пожалуйста свою роль".format(message.from_user),
+                                 reply_markup=markup)
+            elif message.text == button1:
+                add_user_role(button1, message)
+            elif message.text == button2:
+                add_user_role(button2, message)
+            elif message.text == button3:
+                add_user_role(button3, message)
+            elif message.text == button4:
+                add_user_role(button4, message)
+            elif message.text == button7:
+                markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+                markup.add(item11, item22, item33)
+                bot.send_message(message.chat.id, button7, reply_markup=markup)
+        elif message.text == button22 or message.text == button6 or message.text == button5 or message.text == button7:
+            if message.text == button22:
+                markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+                markup.add(item5, item6, item7)
+                bot.send_message(message.chat.id,
+                                 "{0.first_name}, выберите действие".format(message.from_user),
+                                 reply_markup=markup)
+            elif message.text == button5:
+                show_my_roles(message)
+            elif message.text == button6:
+                clear_my_roles(message)
+            elif message.text == button7:
+                markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+                markup.add(item11, item22, item33)
+                bot.send_message(message.chat.id, button7, reply_markup=markup)
+        elif message.text == button33:
+            bot.send_message(message.chat.id, help_commands)
         elif message.text[:4].lower() == '@adm':
             check_user_role(button3, message)
 
@@ -126,6 +152,6 @@ def check_user_role(role, message):
                 administration_users.append(j)
         for i in administration_users:
             bot.send_message(i, message.text[5:])
-    
+
 
 bot.polling(none_stop=True)
