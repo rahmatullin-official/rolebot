@@ -15,21 +15,7 @@ def start(message):
     bot.send_message(message.chat.id,
                      "Здравсвуйте {0.first_name}! Выберите пожалуйста свою роль".format(message.from_user),
                      reply_markup=markup)
-    db = sqlite3.connect('all_users.db')
-    sql = db.cursor()
-    sql.execute("""CREATE TABLE IF NOT EXISTS users(
-       id INTEGER, teacher INTEGER, teacher_class INTEGER, mk INTEGER, administration INTEGER);
-    """)
-    db.commit()
-
-    people_id = message.chat.id
-    sql.execute(f"SELECT id FROM users WHERE id = {people_id}")
-    data = sql.fetchone()
-    if data:
-        pass
-    else:
-        sql.execute(f"INSERT INTO users(id, teacher, teacher_class, mk, administration) VALUES ({people_id}, 0,0,0,0);")
-        db.commit()
+    new_user_add(message)
 
 
 @bot.message_handler(content_types=['text'])
@@ -47,6 +33,24 @@ def bot_message(message):
             show_my_roles(message)
         elif message.text == button6:
             clear_my_roles(message)
+
+
+def new_user_add(message):
+    db = sqlite3.connect('all_users.db')
+    sql = db.cursor()
+    sql.execute("""CREATE TABLE IF NOT EXISTS users(
+          id INTEGER, teacher INTEGER, teacher_class INTEGER, mk INTEGER, administration INTEGER);
+       """)
+    db.commit()
+
+    people_id = message.chat.id
+    sql.execute(f"SELECT id FROM users WHERE id = {people_id}")
+    data = sql.fetchone()
+    if data:
+        pass
+    else:
+        sql.execute(f"INSERT INTO users(id, teacher, teacher_class, mk, administration) VALUES ({people_id}, 0,0,0,0);")
+        db.commit()
 
 
 def add_user_role(role, message):
