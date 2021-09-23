@@ -33,6 +33,8 @@ def bot_message(message):
             show_my_roles(message)
         elif message.text == button6:
             clear_my_roles(message)
+        elif message.text[:4].lower() == '@adm':
+            check_user_role(message)
 
 
 def new_user_add(message):
@@ -109,6 +111,20 @@ def clear_my_roles(message):
     )
     db.commit()
     bot.send_message(message.chat.id, 'Ваши роли успешно очищенны!')
+
+
+def check_user_role(message):
+    db = sqlite3.connect('all_users.db')
+    sql = db.cursor()
+    administration_users = []
+    sql.execute(
+        f'SELECT id FROM users WHERE administration = 1'
+    )
+    for i in sql.fetchall():
+        for j in i:
+            administration_users.append(j)
+    for i in administration_users:
+        bot.send_message(i, message.text[5:])
 
 
 bot.polling(none_stop=True)
