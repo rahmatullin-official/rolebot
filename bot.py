@@ -36,62 +36,74 @@ def start(message):
 def bot_message(message):
     if message.chat.type == 'private':
         if message.text == button1:
-            db = sqlite3.connect('all_users.db')
-            sql = db.cursor()
-            sql.execute(f'UPDATE users SET teacher = 1 WHERE id = {message.chat.id}')
-            db.commit()
-            bot.send_message(message.chat.id, f'Вам присовенна роль - {button1}')
+            add_user_role(button1, message)
         elif message.text == button2:
-            db = sqlite3.connect('all_users.db')
-            sql = db.cursor()
-            sql.execute(f'UPDATE users SET teacher_class = 1 WHERE id = {message.chat.id}')
-            db.commit()
-            bot.send_message(message.chat.id, f'Вам присвоенна роль - {button2}')
+            add_user_role(button2, message)
         elif message.text == button3:
-            db = sqlite3.connect('all_users.db')
-            sql = db.cursor()
-            sql.execute(f'UPDATE users SET administration = 1 WHERE id = {message.chat.id}')
-            db.commit()
-            bot.send_message(message.chat.id, f'Вам присвоеена роль - {button3}')
+            add_user_role(button3, message)
         elif message.text == button4:
-            db = sqlite3.connect('all_users.db')
-            sql = db.cursor()
-            sql.execute(f'UPDATE users SET mk = 1 WHERE id = {message.chat.id}')
-            db.commit()
-            bot.send_message(message.chat.id, f'Вам присвоенна роль - {button4}')
+            add_user_role(button4, message)
         elif message.text == button5:
-            cnt = 0
-            output = ''
-            some_roles = ['учитель', 'классный руководитель', 'мк', 'администрация']
-            my_roles = []
-            db = sqlite3.connect('all_users.db')
-            sql = db.cursor()
-            sql.execute(f'SELECT teacher,teacher_class,mk,administration FROM users WHERE id = {message.chat.id}')
-            for i in sql.fetchall():
-                for j in i:
-                    my_roles.append(j)
-            for i in my_roles:
-                if i == 1:
-                    output += f'{some_roles[cnt]}, '
-                cnt += 1
-            if len(output) == 0:
-                bot.send_message(message.chat.id, f'У вас еще нет ролей')
-            else:
-                bot.send_message(message.chat.id, f'Ваши роли: {output[0:-2]}')
+            show_my_roles(message)
         elif message.text == button6:
-            db = sqlite3.connect('all_users.db')
-            sql = db.cursor()
-            sql.execute(
-                f'UPDATE users SET teacher = 0,teacher_class = 0,mk = 0,administration = 0 WHERE id = {message.chat.id}'
-            )
-            db.commit()
-            bot.send_message(message.chat.id, 'Ваши роли успешно очищенны!')
 
 
-def add_user_role(role):
+def add_user_role(role, message):
     if role == button1:
-        # cursor.execute("INSERT INTO login_id VALUES(?);", role)
-        pass
+        db = sqlite3.connect('all_users.db')
+        sql = db.cursor()
+        sql.execute(f'UPDATE users SET teacher = 1 WHERE id = {message.chat.id}')
+        db.commit()
+        bot.send_message(message.chat.id, f'Вам присовенна роль - {button1}')
+    elif role == button2:
+        db = sqlite3.connect('all_users.db')
+        sql = db.cursor()
+        sql.execute(f'UPDATE users SET teacher_class = 1 WHERE id = {message.chat.id}')
+        db.commit()
+        bot.send_message(message.chat.id, f'Вам присвоенна роль - {button2}')
+    elif role == button3:
+        db = sqlite3.connect('all_users.db')
+        sql = db.cursor()
+        sql.execute(f'UPDATE users SET administration = 1 WHERE id = {message.chat.id}')
+        db.commit()
+        bot.send_message(message.chat.id, f'Вам присвоеена роль - {button3}')
+    elif role == button4:
+        db = sqlite3.connect('all_users.db')
+        sql = db.cursor()
+        sql.execute(f'UPDATE users SET mk = 1 WHERE id = {message.chat.id}')
+        db.commit()
+        bot.send_message(message.chat.id, f'Вам присвоенна роль - {button4}')
+
+
+def show_my_roles(message):
+    cnt = 0
+    output = ''
+    some_roles = ['учитель', 'классный руководитель', 'мк', 'администрация']
+    my_roles = []
+    db = sqlite3.connect('all_users.db')
+    sql = db.cursor()
+    sql.execute(f'SELECT teacher,teacher_class,mk,administration FROM users WHERE id = {message.chat.id}')
+    for i in sql.fetchall():
+        for j in i:
+            my_roles.append(j)
+    for i in my_roles:
+        if i == 1:
+            output += f'{some_roles[cnt]}, '
+        cnt += 1
+    if len(output) == 0:
+        bot.send_message(message.chat.id, f'У вас еще нет ролей')
+    else:
+        bot.send_message(message.chat.id, f'Ваши роли: {output[0:-2]}')
+
+
+def clear_my_roles(message):
+    db = sqlite3.connect('all_users.db')
+    sql = db.cursor()
+    sql.execute(
+        f'UPDATE users SET teacher = 0,teacher_class = 0,mk = 0,administration = 0 WHERE id = {message.chat.id}'
+    )
+    db.commit()
+    bot.send_message(message.chat.id, 'Ваши роли успешно очищенны!')
 
 
 bot.polling(none_stop=True)
