@@ -2,8 +2,9 @@ import telebot
 from telebot import types
 import sqlite3
 from config import token, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item111, item12, \
-    item13, item14, item11, item22, item33, button1, button2, button3, \
-    button4, button5, button6, button11, button22, button33, button7, button8, button9, button10, button111, button12, \
+    item13, item14, item11, item22, item33, item44, button1, button2, button3, \
+    button4, button5, button6, button11, button22, button33, button44, button7, button8, button9, button10, button111, \
+    button12, \
     button13, button14, help_commands
 
 bot = telebot.TeleBot(token)
@@ -13,7 +14,7 @@ bot = telebot.TeleBot(token)
 def start(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
-    markup.add(item11, item22, item33)
+    markup.add(item11, item22, item44, item33)
 
     bot.send_message(message.chat.id,
                      "Здравсвуйте {0.first_name}!".format(message.from_user),
@@ -45,7 +46,7 @@ def bot_message(message):
                     or message.text == button13 or message.text == button14:
                 if message.text == button4:
                     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-                    markup.add(item8, item9, item10, item111, item12, item13, item14)
+                    markup.add(item8, item9, item10, item111, item12, item13, item14, item7)
                     bot.send_message(message.chat.id,
                                      "{0.first_name}, выберите пожалуйста категорию мк".format(message.from_user),
                                      reply_markup=markup)
@@ -65,7 +66,7 @@ def bot_message(message):
                     add_user_role(button14, message)
             elif message.text == button7:
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-                markup.add(item11, item22, item33)
+                markup.add(item11, item22, item44, item33)
                 bot.send_message(message.chat.id, "Вы вернулись в главное меню", reply_markup=markup)
         elif message.text == button22 or message.text == button6 or message.text == button5 or message.text == button7:
             if message.text == button22:
@@ -84,6 +85,8 @@ def bot_message(message):
                 bot.send_message(message.chat.id, "Вы вернулись в главное меню", reply_markup=markup)
         elif message.text == button33:
             bot.send_message(message.chat.id, help_commands)
+        elif message.text == button44:
+            print('opros ahahah')
         elif message.text[:8].lower() == '@teacher' and message.text[8] == ' ':
             check_user_role(button1, message)
         elif message.text[:14].lower() == '@teacher_class':

@@ -18,6 +18,7 @@ button14 = "мк истории"
 button11 = "получить роль"
 button22 = "действия с ролями"
 button33 = "команды для оповещений"
+button44 = "создать опрос"
 help_commands = f'@adm text - отправить сообщение людям с ролью {button3} \n' \
                 f'@teacher text - отправить сообщение людям с ролью {button1} \n' \
                 f'@teacher_class text - отправить сообщение людям с ролью {button2} \n' \
@@ -45,3 +46,4 @@ item14 = types.KeyboardButton(button14)
 item11 = types.KeyboardButton(button11)
 item22 = types.KeyboardButton(button22)
 item33 = types.KeyboardButton(button33)
+item44 = types.KeyboardButton(button44)
