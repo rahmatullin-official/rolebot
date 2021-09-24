@@ -59,6 +59,10 @@ def bot_message(message):
                 bot.send_message(message.chat.id, button7, reply_markup=markup)
         elif message.text == button33:
             bot.send_message(message.chat.id, help_commands)
+        elif message.text[:8].lower() == '@teacher' and message.text[8] == ' ':
+            check_user_role(button1, message)
+        elif message.text[:14].lower() == '@teacher_class':
+            check_user_role(button2, message)
         elif message.text[:4].lower() == '@adm':
             check_user_role(button3, message)
 
@@ -140,9 +144,29 @@ def clear_my_roles(message):
 
 
 def check_user_role(role, message):
-    if role == button3:
-        db = sqlite3.connect('all_users.db')
-        sql = db.cursor()
+    db = sqlite3.connect('all_users.db')
+    sql = db.cursor()
+    if role == button1:
+        teacher_users = []
+        sql.execute(
+            f'SELECT id FROM users WHERE teacher = 1'
+        )
+        for i in sql.fetchall():
+            for j in i:
+                teacher_users.append(j)
+        for i in teacher_users:
+            bot.send_message(i, message.text[9:])
+    elif role == button2:
+        teacher_class_users = []
+        sql.execute(
+            f'SELECT id FROM users WHERE teacher_class = 1'
+        )
+        for i in sql.fetchall():
+            for j in i:
+                teacher_class_users.append(j)
+        for i in teacher_class_users:
+            bot.send_message(i, message.text[15:])
+    elif role == button3:
         administration_users = []
         sql.execute(
             f'SELECT id FROM users WHERE administration = 1'

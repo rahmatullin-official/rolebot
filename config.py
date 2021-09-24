@@ -12,7 +12,7 @@ button11 = "получить роль"
 button22 = "действия с ролями"
 button33 = "команды для оповещений"
 help_commands = '@adm text - отправить сообщение людям с ролью "администратор" \n' \
-                '@teach text - отправить сообщение людям с ролью "учитель" \n' \
+                '@teacher text - отправить сообщение людям с ролью "учитель" \n' \
                 '@teacher_class text - отправить сообщение людям с ролью "классный руководитель"'
 item1 = types.KeyboardButton(button1)
 item2 = types.KeyboardButton(button2)
