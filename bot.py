@@ -1,8 +1,10 @@
 import telebot
 from telebot import types
 import sqlite3
-from config import token, item1, item2, item3, item4, item5, item6, item11, item22, item33, button1, button2, button3, \
-    button4, button5, button6, button11, button22, button33, item7, button7, help_commands
+from config import token, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item111, item12, \
+    item13, item14, item11, item22, item33, button1, button2, button3, \
+    button4, button5, button6, button11, button22, button33, button7, button8, button9, button10, button111, button12, \
+    button13, button14, help_commands
 
 bot = telebot.TeleBot(token)
 
@@ -23,7 +25,9 @@ def start(message):
 def bot_message(message):
     if message.chat.type == 'private':
         if message.text == button11 or message.text == button1 or message.text == button2 or message.text == button3 \
-                or message.text == button4 or message.text == button7:
+                or message.text == button4 or message.text == button7 or message.text == button8 \
+                or message.text == button9 or message.text == button10 or message.text == button111 \
+                or message.text == button12 or message.text == button13 or message.text == button14:
             if message.text == button11:
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
                 markup.add(item1, item2, item3, item4, item7)
@@ -36,12 +40,33 @@ def bot_message(message):
                 add_user_role(button2, message)
             elif message.text == button3:
                 add_user_role(button3, message)
-            elif message.text == button4:
-                add_user_role(button4, message)
+            elif message.text == button4 or message.text == button8 or message.text == button9 \
+                    or message.text == button10 or message.text == button111 or message.text == button12 \
+                    or message.text == button13 or message.text == button14:
+                if message.text == button4:
+                    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+                    markup.add(item8, item9, item10, item111, item12, item13, item14)
+                    bot.send_message(message.chat.id,
+                                     "{0.first_name}, выберите пожалуйста категорию мк".format(message.from_user),
+                                     reply_markup=markup)
+                elif message.text == button8:
+                    add_user_role(button8, message)
+                elif message.text == button9:
+                    add_user_role(button9, message)
+                elif message.text == button10:
+                    add_user_role(button10, message)
+                elif message.text == button111:
+                    add_user_role(button111, message)
+                elif message.text == button12:
+                    add_user_role(button12, message)
+                elif message.text == button13:
+                    add_user_role(button13, message)
+                elif message.text == button14:
+                    add_user_role(button14, message)
             elif message.text == button7:
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
                 markup.add(item11, item22, item33)
-                bot.send_message(message.chat.id, button7, reply_markup=markup)
+                bot.send_message(message.chat.id, "Вы вернулись в главное меню", reply_markup=markup)
         elif message.text == button22 or message.text == button6 or message.text == button5 or message.text == button7:
             if message.text == button22:
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -56,7 +81,7 @@ def bot_message(message):
             elif message.text == button7:
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
                 markup.add(item11, item22, item33)
-                bot.send_message(message.chat.id, button7, reply_markup=markup)
+                bot.send_message(message.chat.id, "Вы вернулись в главное меню", reply_markup=markup)
         elif message.text == button33:
             bot.send_message(message.chat.id, help_commands)
         elif message.text[:8].lower() == '@teacher' and message.text[8] == ' ':
@@ -65,13 +90,28 @@ def bot_message(message):
             check_user_role(button2, message)
         elif message.text[:4].lower() == '@adm':
             check_user_role(button3, message)
+        elif message.text[:9].lower() == '@mkinfmat':
+            check_user_role(button8, message)
+        elif message.text[:4].lower() == '@mkn':
+            check_user_role(button9, message)
+        elif message.text[:5].lower() == '@mkiy':
+            check_user_role(button10, message)
+        elif message.text[:6].lower() == '@mkfil':
+            check_user_role(button111, message)
+        elif message.text[:5].lower() == '@mken':
+            check_user_role(button12, message)
+        elif message.text[:6].lower() == '@mkfot':
+            check_user_role(button13, message)
+        elif message.text[:4].lower() == '@mki':
+            check_user_role(button14, message)
 
 
 def new_user_add(message):
     db = sqlite3.connect('all_users.db')
     sql = db.cursor()
     sql.execute("""CREATE TABLE IF NOT EXISTS users(
-          id INTEGER, teacher INTEGER, teacher_class INTEGER, mk INTEGER, administration INTEGER);
+          id INTEGER, teacher INTEGER, teacher_class INTEGER, mkinfmat INTEGER, mkn INTEGER, mkiy INTEGER, mkfil INTEGER,
+          mken INTEGER, mkfot INTEGER, mki INTEGER, administration INTEGER);
        """)
     db.commit()
 
@@ -81,7 +121,8 @@ def new_user_add(message):
     if data:
         pass
     else:
-        sql.execute(f"INSERT INTO users(id, teacher, teacher_class, mk, administration) VALUES ({people_id}, 0,0,0,0);")
+        sql.execute(
+            f"INSERT INTO users(id, teacher, teacher_class, mkinfmat, mkn, mkiy, mkfil, mken, mkfot, mki, administration) VALUES ({people_id}, 0,0,0,0,0,0,0,0,0,0);")
         db.commit()
 
 
@@ -104,22 +145,67 @@ def add_user_role(role, message):
         sql.execute(f'UPDATE users SET administration = 1 WHERE id = {message.chat.id}')
         db.commit()
         bot.send_message(message.chat.id, f'Вам присвоеена роль - {button3}')
-    elif role == button4:
+    elif role == button8:
         db = sqlite3.connect('all_users.db')
         sql = db.cursor()
-        sql.execute(f'UPDATE users SET mk = 1 WHERE id = {message.chat.id}')
+        sql.execute(f'UPDATE users SET mkinfmat = 1 WHERE id = {message.chat.id}')
         db.commit()
-        bot.send_message(message.chat.id, f'Вам присвоенна роль - {button4}')
+        bot.send_message(message.chat.id, f'Вам присвоеена роль - {button8}')
+    elif role == button9:
+        db = sqlite3.connect('all_users.db')
+        sql = db.cursor()
+        sql.execute(f'UPDATE users SET mkn = 1 WHERE id = {message.chat.id}')
+        db.commit()
+        bot.send_message(message.chat.id, f'Вам присвоеена роль - {button9}')
+    elif role == button10:
+        db = sqlite3.connect('all_users.db')
+        sql = db.cursor()
+        sql.execute(f'UPDATE users SET mkiy = 1 WHERE id = {message.chat.id}')
+        db.commit()
+        bot.send_message(message.chat.id, f'Вам присвоеена роль - {button10}')
+    elif role == button111:
+        db = sqlite3.connect('all_users.db')
+        sql = db.cursor()
+        sql.execute(f'UPDATE users SET mkfil = 1 WHERE id = {message.chat.id}')
+        db.commit()
+        bot.send_message(message.chat.id, f'Вам присвоеена роль - {button111}')
+    elif role == button12:
+        db = sqlite3.connect('all_users.db')
+        sql = db.cursor()
+        sql.execute(f'UPDATE users SET mken = 1 WHERE id = {message.chat.id}')
+        db.commit()
+        bot.send_message(message.chat.id, f'Вам присвоеена роль - {button12}')
+    elif role == button13:
+        db = sqlite3.connect('all_users.db')
+        sql = db.cursor()
+        sql.execute(f'UPDATE users SET mkfot = 1 WHERE id = {message.chat.id}')
+        db.commit()
+        bot.send_message(message.chat.id, f'Вам присвоеена роль - {button13}')
+    elif role == button14:
+        db = sqlite3.connect('all_users.db')
+        sql = db.cursor()
+        sql.execute(f'UPDATE users SET mki = 1 WHERE id = {message.chat.id}')
+        db.commit()
+        bot.send_message(message.chat.id, f'Вам присвоеена роль - {button14}')
+    # elif role == button4:
+    #     db = sqlite3.connect('all_users.db')
+    #     sql = db.cursor()
+    #     sql.execute(f'UPDATE users SET mk = 1 WHERE id = {message.chat.id}')
+    #     db.commit()
+    #     bot.send_message(message.chat.id, f'Вам присвоенна роль - {button4}')
 
 
 def show_my_roles(message):
     cnt = 0
     output = ''
-    some_roles = ['учитель', 'классный руководитель', 'мк', 'администрация']
+    some_roles = ['учитель', 'классный руководитель', 'мк инф + матем', 'мк начальной школы', 'мк иностранные яз',
+                  'мк филологи', 'мк естесвенные науки',
+                  'мк физ-ра, ОБЖ, технолог', 'мк истории', 'администрация']
     my_roles = []
     db = sqlite3.connect('all_users.db')
     sql = db.cursor()
-    sql.execute(f'SELECT teacher,teacher_class,mk,administration FROM users WHERE id = {message.chat.id}')
+    sql.execute(
+        f'SELECT teacher,teacher_class,mkinfmat, mkn, mkiy, mkfil, mken, mkfot, mki,administration FROM users WHERE id = {message.chat.id}')
     for i in sql.fetchall():
         for j in i:
             my_roles.append(j)
@@ -137,7 +223,8 @@ def clear_my_roles(message):
     db = sqlite3.connect('all_users.db')
     sql = db.cursor()
     sql.execute(
-        f'UPDATE users SET teacher = 0,teacher_class = 0,mk = 0,administration = 0 WHERE id = {message.chat.id}'
+        f'UPDATE users SET teacher = 0,teacher_class = 0,mkinfmat = 0, mkn = 0, mkiy = 0, mkfil = 0, mken = 0, mkfot = 0,'
+        f' mki = 0,administration = 0 WHERE id = {message.chat.id}'
     )
     db.commit()
     bot.send_message(message.chat.id, 'Ваши роли успешно очищенны!')
@@ -175,6 +262,76 @@ def check_user_role(role, message):
             for j in i:
                 administration_users.append(j)
         for i in administration_users:
+            bot.send_message(i, message.text[5:])
+    elif role == button8:
+        mkinfmat_users = []
+        sql.execute(
+            f'SELECT id FROM users WHERE mkinfmat = 1'
+        )
+        for i in sql.fetchall():
+            for j in i:
+                mkinfmat_users.append(j)
+        for i in mkinfmat_users:
+            bot.send_message(i, message.text[9:])
+    elif role == button9:
+        mkn_users = []
+        sql.execute(
+            f'SELECT id FROM users WHERE mkn = 1'
+        )
+        for i in sql.fetchall():
+            for j in i:
+                mkn_users.append(j)
+        for i in mkn_users:
+            bot.send_message(i, message.text[5:])
+    elif role == button10:
+        mkiy_users = []
+        sql.execute(
+            f'SELECT id FROM users WHERE mkiy = 1'
+        )
+        for i in sql.fetchall():
+            for j in i:
+                mkiy_users.append(j)
+        for i in mkiy_users:
+            bot.send_message(i, message.text[6:])
+    elif role == button111:
+        mkfil_users = []
+        sql.execute(
+            f'SELECT id FROM users WHERE mkfil = 1'
+        )
+        for i in sql.fetchall():
+            for j in i:
+                mkfil_users.append(j)
+        for i in mkfil_users:
+            bot.send_message(i, message.text[7:])
+    elif role == button12:
+        mken_users = []
+        sql.execute(
+            f'SELECT id FROM users WHERE mken = 1'
+        )
+        for i in sql.fetchall():
+            for j in i:
+                mken_users.append(j)
+        for i in mken_users:
+            bot.send_message(i, message.text[6:])
+    elif role == button13:
+        mkfot_users = []
+        sql.execute(
+            f'SELECT id FROM users WHERE mkfot = 1'
+        )
+        for i in sql.fetchall():
+            for j in i:
+                mkfot_users.append(j)
+        for i in mkfot_users:
+            bot.send_message(i, message.text[7:])
+    elif role == button14:
+        mki_users = []
+        sql.execute(
+            f'SELECT id FROM users WHERE mki = 1'
+        )
+        for i in sql.fetchall():
+            for j in i:
+                mki_users.append(j)
+        for i in mki_users:
             bot.send_message(i, message.text[5:])
 
 
