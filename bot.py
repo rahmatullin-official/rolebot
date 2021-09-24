@@ -8,6 +8,9 @@ from config import token, item1, item2, item3, item4, item5, item6, item7, item8
     button13, button14, help_commands
 
 bot = telebot.TeleBot(token)
+opt = 0
+my_messages = []
+question = ""
 
 
 @bot.message_handler(commands=['start'])
@@ -20,6 +23,21 @@ def start(message):
                      "Здравсвуйте {0.first_name}!".format(message.from_user),
                      reply_markup=markup)
     new_user_add(message)
+
+
+@bot.message_handler(func=lambda message: True)
+def echo_message(message):
+    global opt
+    text = message.text
+    print(f'OPT: {opt}')
+    if opt > 0:
+        if message.text == '/stop':
+            opt = 0
+            send_poll(message, my_messages)
+        else:
+            my_messages.append(text)
+    print(my_messages)
+    bot_message(message)
 
 
 @bot.message_handler(content_types=['text'])
@@ -86,7 +104,8 @@ def bot_message(message):
         elif message.text == button33:
             bot.send_message(message.chat.id, help_commands)
         elif message.text == button44:
-            print('opros ahahah')
+            bot.send_message(message.chat.id, "Напишите тему опроса!")
+            bot.register_next_step_handler(message, create_question_poll)
         elif message.text[:8].lower() == '@teacher' and message.text[8] == ' ':
             check_user_role(button1, message)
         elif message.text[:14].lower() == '@teacher_class':
@@ -336,6 +355,18 @@ def check_user_role(role, message):
                 mki_users.append(j)
         for i in mki_users:
             bot.send_message(i, message.text[5:])
+
+
+def create_question_poll(message):
+    global opt, question
+    question = message.text
+    bot.send_message(message.chat.id, 'Чтобы закончить писать пункты опроса напишите /stop')
+    opt += 1
+    print(question)
+
+
+def send_poll(message, my_messages):
+    bot.send_poll(message.chat.id, question, my_messages)
 
 
 bot.polling(none_stop=True)
