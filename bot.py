@@ -11,6 +11,7 @@ bot = telebot.TeleBot(token)
 opt = 0
 my_messages = []
 question = ""
+role_option = ''
 
 
 @bot.message_handler(commands=['start'])
@@ -133,7 +134,7 @@ def new_user_add(message):
     sql = db.cursor()
     sql.execute("""CREATE TABLE IF NOT EXISTS users(
           id INTEGER, teacher INTEGER, teacher_class INTEGER, mkinfmat INTEGER, mkn INTEGER, mkiy INTEGER, mkfil INTEGER,
-          mken INTEGER, mkfot INTEGER, mki INTEGER, administration INTEGER);
+          mken INTEGER, mkfot INTEGER, mki INTEGER, adm INTEGER);
        """)
     db.commit()
 
@@ -144,7 +145,7 @@ def new_user_add(message):
         pass
     else:
         sql.execute(
-            f"INSERT INTO users(id, teacher, teacher_class, mkinfmat, mkn, mkiy, mkfil, mken, mkfot, mki, administration) VALUES ({people_id}, 0,0,0,0,0,0,0,0,0,0);")
+            f"INSERT INTO users(id, teacher, teacher_class, mkinfmat, mkn, mkiy, mkfil, mken, mkfot, mki, adm) VALUES ({people_id}, 0,0,0,0,0,0,0,0,0,0);")
         db.commit()
 
 
@@ -164,7 +165,7 @@ def add_user_role(role, message):
     elif role == button3:
         db = sqlite3.connect('all_users.db')
         sql = db.cursor()
-        sql.execute(f'UPDATE users SET administration = 1 WHERE id = {message.chat.id}')
+        sql.execute(f'UPDATE users SET adm = 1 WHERE id = {message.chat.id}')
         db.commit()
         bot.send_message(message.chat.id, f'Вам присвоеена роль - {button3}')
     elif role == button8:
@@ -227,7 +228,7 @@ def show_my_roles(message):
     db = sqlite3.connect('all_users.db')
     sql = db.cursor()
     sql.execute(
-        f'SELECT teacher,teacher_class,mkinfmat, mkn, mkiy, mkfil, mken, mkfot, mki,administration FROM users WHERE id = {message.chat.id}')
+        f'SELECT teacher,teacher_class,mkinfmat, mkn, mkiy, mkfil, mken, mkfot, mki,adm FROM users WHERE id = {message.chat.id}')
     for i in sql.fetchall():
         for j in i:
             my_roles.append(j)
@@ -246,7 +247,7 @@ def clear_my_roles(message):
     sql = db.cursor()
     sql.execute(
         f'UPDATE users SET teacher = 0,teacher_class = 0,mkinfmat = 0, mkn = 0, mkiy = 0, mkfil = 0, mken = 0, mkfot = 0,'
-        f' mki = 0,administration = 0 WHERE id = {message.chat.id}'
+        f' mki = 0,adm = 0 WHERE id = {message.chat.id}'
     )
     db.commit()
     bot.send_message(message.chat.id, 'Ваши роли успешно очищенны!')
@@ -278,7 +279,7 @@ def check_user_role(role, message):
     elif role == button3:
         administration_users = []
         sql.execute(
-            f'SELECT id FROM users WHERE administration = 1'
+            f'SELECT id FROM users WHERE adm = 1'
         )
         for i in sql.fetchall():
             for j in i:
@@ -358,15 +359,32 @@ def check_user_role(role, message):
 
 
 def create_question_poll(message):
-    global opt, question
+    global question
     question = message.text
-    bot.send_message(message.chat.id, 'Чтобы закончить писать пункты опроса напишите /stop')
-    opt += 1
+    bot.send_message(message.chat.id, 'Напишите для какой роли вы хотите создать опрос (@role)')
+    bot.register_next_step_handler(message, role_for_option)
     print(question)
 
 
 def send_poll(message, my_messages):
-    bot.send_poll(message.chat.id, question, my_messages)
+    db = sqlite3.connect('all_users.db')
+    sql = db.cursor()
+    users_roles = []
+    roles = sql.execute(
+        f'SELECT id FROM users WHERE {role_option[1:]} = 1'
+    )
+    for i in sql.fetchall():
+        for j in i:
+            users_roles.append(j)
+    for i in users_roles:
+        bot.send_poll(i, question, my_messages, False)
+
+
+def role_for_option(message):
+    global opt, role_option
+    role_option = message.text
+    bot.send_message(message.chat.id, 'Чтобы закончить писать пункты опроса напишите /stop')
+    opt += 1
 
 
 bot.polling(none_stop=True)

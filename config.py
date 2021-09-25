@@ -15,20 +15,21 @@ button111 = "мк филологи"
 button12 = "мк естесвенные науки"
 button13 = "мк физ-ра, ОБЖ, технолог"
 button14 = "мк истории"
-button11 = "получить роль"
-button22 = "действия с ролями"
-button33 = "команды для оповещений"
-button44 = "создать опрос"
-help_commands = f'@adm text - отправить сообщение людям с ролью {button3} \n' \
-                f'@teacher text - отправить сообщение людям с ролью {button1} \n' \
-                f'@teacher_class text - отправить сообщение людям с ролью {button2} \n' \
-                f'@mkinfmat text - отправить сообщение люядм с ролью {button8} \n' \
-                f'@mkn text - отправить сообщение людям с ролью {button9} \n' \
-                f'@mkiy text - отправить сообщение людям с ролью {button10} \n' \
-                f'@mkfil text - отправить сообщение людям с ролью {button111} \n' \
-                f'@mken text - отправить сообщение людям с ролью {button12} \n' \
-                f'@mkfot text - отправить сообщение людям с ролью {button13} \n' \
-                f'@mki text - отправить сообщение людям с ролью {button14}'
+button11 = "Получить роль"
+button22 = "Действия с ролями"
+button33 = "Обращения к ролям"
+button44 = "Создать опрос"
+help_commands = f'@adm роль -> {button3} \n' \
+                f'@teacher роль -> {button1} \n' \
+                f'@teacher_class роль -> {button2} \n' \
+                f'@mkinfmat роль -> {button8} \n' \
+                f'@mkn роль -> {button9} \n' \
+                f'@mkiy роль -> {button10} \n' \
+                f'@mkfil роль -> {button111} \n' \
+                f'@mken роль -> {button12} \n' \
+                f'@mkfot роль -> {button13} \n' \
+                f'@mki роль -> {button14} \n' \
+                f'для отправки сообщения -> @role text'
 item1 = types.KeyboardButton(button1)
 item2 = types.KeyboardButton(button2)
 item3 = types.KeyboardButton(button3)
