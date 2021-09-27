@@ -1,6 +1,7 @@
 from telebot import types
+import os
 
-token = ""  # your token
+token = os.environ.get("my_token")  # your token
 button1 = "учитель"
 button2 = "классный руководитель"
 button3 = "администрация"
