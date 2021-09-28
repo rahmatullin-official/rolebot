@@ -5,7 +5,7 @@ from config import token, item1, item2, item3, item4, item5, item6, item7, item8
     item13, item14, item11, item22, item33, item44, button1, button2, button3, \
     button4, button5, button6, button11, button22, button33, button44, button7, button8, button9, button10, button111, \
     button12, \
-    button13, button14, help_commands
+    button13, button14, help_commands, my_roles
 
 bot = telebot.TeleBot(token)
 opt = 0
@@ -28,17 +28,22 @@ def start(message):
 
 @bot.message_handler(func=lambda message: True)
 def echo_message(message):
-    global opt
-    text = message.text
-    print(f'OPT: {opt}')
-    if opt > 0:
-        if message.text == '/stop':
-            opt = 0
-            send_poll(message, my_messages)
-        else:
-            my_messages.append(text)
-    print(my_messages)
-    bot_message(message)
+    global my_messages
+    try:
+        global opt
+        text = message.text
+        print(f'OPT: {opt}')
+        if opt > 0:
+            if message.text == '/stop':
+                opt = 0
+                send_poll(message, my_messages)
+            else:
+                my_messages.append(text)
+        print(my_messages)
+        bot_message(message)
+    except Exception:
+        bot.send_message(message.chat.id, 'Произошла ошибка, пожалуйста попробуйте еще раз')
+        my_messages = []
 
 
 @bot.message_handler(content_types=['text'])
@@ -127,6 +132,8 @@ def bot_message(message):
             check_user_role(button13, message)
         elif message.text[:4].lower() == '@mki':
             check_user_role(button14, message)
+        elif message.text.lower() == '/help_commands':
+            role_commands(message)
 
 
 def new_user_add(message):
@@ -366,7 +373,8 @@ def create_question_poll(message):
     print(question)
 
 
-def send_poll(message, my_messages):
+def send_poll(message, messages):
+    global my_messages
     db = sqlite3.connect('all_users.db')
     sql = db.cursor()
     users_roles = []
@@ -377,14 +385,25 @@ def send_poll(message, my_messages):
         for j in i:
             users_roles.append(j)
     for i in users_roles:
-        bot.send_poll(i, question, my_messages, False)
+        bot.send_poll(i, question, messages, False)
+    my_messages = []
 
 
 def role_for_option(message):
     global opt, role_option
     role_option = message.text
-    bot.send_message(message.chat.id, 'Чтобы закончить писать пункты опроса напишите /stop')
-    opt += 1
+    if role_option not in my_roles:
+        bot.send_message(message.chat.id, 'Вы указали неверную роль! Чтобы посмотреть список ролей -> /help_commands')
+    else:
+        bot.send_message(message.chat.id, 'Чтобы закончить писать пункты опроса напишите /stop')
+        opt += 1
 
 
-bot.polling(none_stop=True)
+def role_commands(message):
+    bot.send_message(message.chat.id, help_commands)
+
+
+try:
+    bot.polling(none_stop=True)
+except Exception:
+    pass
