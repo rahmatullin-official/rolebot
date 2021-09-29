@@ -193,6 +193,7 @@ def add_user_role(role, message):
         sql = db.cursor()
         sql.execute(f'UPDATE users SET mken = 1 WHERE id = {message.chat.id}')
         db.commit()
+        db.commit()
         bot.send_message(message.chat.id, f'Вам присвоеена роль - {button12}')
     elif role == button13:
         db = sqlite3.connect('all_users.db')
@@ -296,8 +297,10 @@ def send_poll(message, messages):
         for z in sql.fetchall():
             for j in z:
                 users_roles.append(j)
-    for i in users_roles:
-        bot.send_poll(i, question, messages, False)
+    bot.send_poll(users_roles[0], question, messages, False)
+    if len(users_roles) > 1:
+        for i in users_roles[1:]:
+            bot.forward_message(i, users_roles[0], message.message_id + 1)
     my_messages = []
     my_id = []
 
