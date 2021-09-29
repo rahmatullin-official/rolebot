@@ -112,7 +112,7 @@ def bot_message(message):
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
                 markup.add(item11, item22, item33)
                 bot.send_message(message.chat.id, "Вы вернулись в главное меню", reply_markup=markup)
-        elif message.text == button33:
+        elif message.text == button33 or message.text == '/help_commands':
             bot.send_message(message.chat.id, help_commands)
         elif message.text == button44:
             if len(my_id) == 0 or my_id[0] == message.chat.id:
@@ -121,28 +121,8 @@ def bot_message(message):
                 bot.register_next_step_handler(message, create_question_poll)
             else:
                 bot.send_message(message.chat.id, 'Другой пользователь уже создает опрос! Пожалуйста подождите.')
-        elif message.text[:8].lower() == '@teacher' and message.text[8] == ' ':
-            check_user_role(button1, message)
-        elif message.text[:14].lower() == '@teacher_class':
-            check_user_role(button2, message)
-        elif message.text[:4].lower() == '@adm':
-            check_user_role(button3, message)
-        elif message.text[:9].lower() == '@mkinfmat':
-            check_user_role(button8, message)
-        elif message.text[:4].lower() == '@mkn':
-            check_user_role(button9, message)
-        elif message.text[:5].lower() == '@mkiy':
-            check_user_role(button10, message)
-        elif message.text[:6].lower() == '@mkfil':
-            check_user_role(button111, message)
-        elif message.text[:5].lower() == '@mken':
-            check_user_role(button12, message)
-        elif message.text[:6].lower() == '@mkfot':
-            check_user_role(button13, message)
-        elif message.text[:4].lower() == '@mki':
-            check_user_role(button14, message)
-        elif message.text.lower() == '/help_commands':
-            role_commands(message)
+        elif message.text[:7].lower() == 'message':
+            check_user_role(message)
 
 
 def new_user_add(message):
@@ -269,109 +249,27 @@ def clear_my_roles(message):
     bot.send_message(message.chat.id, 'Ваши роли успешно очищенны!')
 
 
-def check_user_role(role, message):
+def check_user_role(message):
     db = sqlite3.connect('all_users.db')
     sql = db.cursor()
-    if role == button1:
-        teacher_users = []
-        sql.execute(
-            f'SELECT id FROM users WHERE teacher = 1'
-        )
-        for i in sql.fetchall():
-            for j in i:
-                teacher_users.append(j)
-        for i in teacher_users:
-            bot.send_message(i, message.text[9:])
-    elif role == button2:
-        teacher_class_users = []
-        sql.execute(
-            f'SELECT id FROM users WHERE teacher_class = 1'
-        )
-        for i in sql.fetchall():
-            for j in i:
-                teacher_class_users.append(j)
-        for i in teacher_class_users:
-            bot.send_message(i, message.text[15:])
-    elif role == button3:
-        administration_users = []
-        sql.execute(
-            f'SELECT id FROM users WHERE adm = 1'
-        )
-        for i in sql.fetchall():
-            for j in i:
-                administration_users.append(j)
-        for i in administration_users:
-            bot.send_message(i, message.text[5:])
-    elif role == button8:
-        mkinfmat_users = []
-        sql.execute(
-            f'SELECT id FROM users WHERE mkinfmat = 1'
-        )
-        for i in sql.fetchall():
-            for j in i:
-                mkinfmat_users.append(j)
-        for i in mkinfmat_users:
-            bot.send_message(i, message.text[9:])
-    elif role == button9:
-        mkn_users = []
-        sql.execute(
-            f'SELECT id FROM users WHERE mkn = 1'
-        )
-        for i in sql.fetchall():
-            for j in i:
-                mkn_users.append(j)
-        for i in mkn_users:
-            bot.send_message(i, message.text[5:])
-    elif role == button10:
-        mkiy_users = []
-        sql.execute(
-            f'SELECT id FROM users WHERE mkiy = 1'
-        )
-        for i in sql.fetchall():
-            for j in i:
-                mkiy_users.append(j)
-        for i in mkiy_users:
-            bot.send_message(i, message.text[6:])
-    elif role == button111:
-        mkfil_users = []
-        sql.execute(
-            f'SELECT id FROM users WHERE mkfil = 1'
-        )
-        for i in sql.fetchall():
-            for j in i:
-                mkfil_users.append(j)
-        for i in mkfil_users:
-            bot.send_message(i, message.text[7:])
-    elif role == button12:
-        mken_users = []
-        sql.execute(
-            f'SELECT id FROM users WHERE mken = 1'
-        )
-        for i in sql.fetchall():
-            for j in i:
-                mken_users.append(j)
-        for i in mken_users:
-            bot.send_message(i, message.text[6:])
-    elif role == button13:
-        mkfot_users = []
-        sql.execute(
-            f'SELECT id FROM users WHERE mkfot = 1'
-        )
-        for i in sql.fetchall():
-            for j in i:
-                mkfot_users.append(j)
-        for i in mkfot_users:
-            bot.send_message(i, message.text[7:])
-    elif role == button14:
-        mki_users = []
-        sql.execute(
-            f'SELECT id FROM users WHERE mki = 1'
-        )
-        for i in sql.fetchall():
-            for j in i:
-                mki_users.append(j)
-        for i in mki_users:
-            bot.send_message(i, message.text[5:])
+    users_users = []
+    some_roles = message.text.split()[1:]
+    some_roles = [i.replace('@', '') for i in some_roles]
+    message_roles = [i for i in some_roles if i in my_roles]
+    if len(message_roles) == 0:
+        bot.send_message(message.chat.id, 'Вы неверно указали роль\n'
+                                          'Для вызова списка ролей напишите /help_commands')
+    else:
+        find_message = message.text.rfind(message_roles[-1]) + len(message_roles[-1]) + 1
+        for i in message_roles:
+            sql.execute(
+                f'SELECT id FROM users WHERE {i} = 1'
+            )
+            for z in sql.fetchall():
+                for j in z:
+                    users_users.append(j)
+        for i in users_users:
+            bot.send_message(i, message.text[find_message:])
 
 
 def create_question_poll(message):
