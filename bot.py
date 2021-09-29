@@ -12,6 +12,8 @@ opt = 0
 my_messages = []
 question = ""
 role_option = ''
+roles = []
+my_id = []
 
 
 @bot.message_handler(commands=['start'])
@@ -28,7 +30,7 @@ def start(message):
 
 @bot.message_handler(func=lambda message: True)
 def echo_message(message):
-    global my_messages
+    global my_messages, my_id
     try:
         global opt
         text = message.text
@@ -38,16 +40,19 @@ def echo_message(message):
                 opt = 0
                 send_poll(message, my_messages)
             else:
-                my_messages.append(text)
+                if my_id[0] == message.chat.id:
+                    my_messages.append(text)
         print(my_messages)
         bot_message(message)
-    except Exception:
-        bot.send_message(message.chat.id, 'Произошла ошибка, пожалуйста попробуйте еще раз')
+    except Exception as ex:
+        bot.send_message(message.chat.id, str(ex))
         my_messages = []
+        my_id = []
 
 
 @bot.message_handler(content_types=['text'])
 def bot_message(message):
+    global my_id
     if message.chat.type == 'private':
         if message.text == button11 or message.text == button1 or message.text == button2 or message.text == button3 \
                 or message.text == button4 or message.text == button7 or message.text == button8 \
@@ -110,8 +115,12 @@ def bot_message(message):
         elif message.text == button33:
             bot.send_message(message.chat.id, help_commands)
         elif message.text == button44:
-            bot.send_message(message.chat.id, "Напишите тему опроса!")
-            bot.register_next_step_handler(message, create_question_poll)
+            if len(my_id) == 0 or my_id[0] == message.chat.id:
+                my_id.append(message.chat.id)
+                bot.send_message(message.chat.id, "Напишите тему опроса!")
+                bot.register_next_step_handler(message, create_question_poll)
+            else:
+                bot.send_message(message.chat.id, 'Другой пользователь уже создает опрос! Пожалуйста подождите.')
         elif message.text[:8].lower() == '@teacher' and message.text[8] == ' ':
             check_user_role(button1, message)
         elif message.text[:14].lower() == '@teacher_class':
@@ -368,35 +377,58 @@ def check_user_role(role, message):
 def create_question_poll(message):
     global question
     question = message.text
-    bot.send_message(message.chat.id, 'Напишите для какой роли вы хотите создать опрос (@role)')
-    bot.register_next_step_handler(message, role_for_option)
+    if question == '/stop':
+        bot.send_message(message.chat.id, 'Вы вернулись в главное меню')
+    else:
+        bot.send_message(message.chat.id, 'Напишите для какой роли/ей вы хотите создать опрос (@role)')
+        bot.send_message(message.chat.id, 'Для перечисления ролей используйте пробел (@role1 @role2)')
+        bot.register_next_step_handler(message, role_for_option)
     print(question)
 
 
 def send_poll(message, messages):
-    global my_messages
+    global my_messages, roles, my_id
     db = sqlite3.connect('all_users.db')
     sql = db.cursor()
     users_roles = []
-    roles = sql.execute(
-        f'SELECT id FROM users WHERE {role_option[1:]} = 1'
-    )
-    for i in sql.fetchall():
-        for j in i:
-            users_roles.append(j)
+    for i in roles:
+        db_roles = sql.execute(
+            f'SELECT id FROM users WHERE {i} = 1'
+        )
+        for z in sql.fetchall():
+            for j in z:
+                users_roles.append(j)
     for i in users_roles:
         bot.send_poll(i, question, messages, False)
     my_messages = []
+    my_id = []
 
 
 def role_for_option(message):
-    global opt, role_option
-    role_option = message.text
-    if role_option not in my_roles:
-        bot.send_message(message.chat.id, 'Вы указали неверную роль! Чтобы посмотреть список ролей -> /help_commands')
+    global opt, role_option, roles, my_id
+    role_option = message.text.split()
+    count_roles = [i for i in role_option if '@' in i]
+    roles = [i.replace('@', '') for i in role_option]
+    print(roles)
+    if len(count_roles) == 1:
+        if roles[0] not in my_roles:
+            bot.send_message(message.chat.id,
+                             'Вы указали неверную роль! Чтобы посмотреть список ролей -> /help_commands')
+        else:
+            bot.send_message(message.chat.id, 'Чтобы закончить писать пункты опроса напишите /stop')
+            opt += 1
     else:
-        bot.send_message(message.chat.id, 'Чтобы закончить писать пункты опроса напишите /stop')
-        opt += 1
+        not_roles = len([i for i in roles if i not in my_roles])
+        if not_roles != 0:
+            if not_roles == 1:
+                bot.send_message(message.chat.id,
+                                 f'Вы указали {not_roles} неверную роль! Чтобы посмотреть список ролей -> /help_commands')
+            else:
+                bot.send_message(message.chat.id,
+                                 f'Вы указали {not_roles} неверных роли! Чтобы посмотреть список ролей -> /help_commands')
+        else:
+            bot.send_message(message.chat.id, 'Чтобы закончить писать пункты опроса напишите /stop')
+            opt += 1
 
 
 def role_commands(message):

@@ -31,7 +31,7 @@ help_commands = f'@adm роль -> {button3} \n' \
                 f'@mkfot роль -> {button13} \n' \
                 f'@mki роль -> {button14} \n' \
                 f'для отправки сообщения -> @role text'
-my_roles = ['@adm', '@teacher', '@teacher_class', '@mkinfmat', '@mkn', '@mkiy', '@mkfil', '@mken', '@mkfot', '@mki']
+my_roles = ['adm', 'teacher', 'teacher_class', 'mkinfmat', 'mkn', 'mkiy', 'mkfil', 'mken', 'mkfot', 'mki']
 item1 = types.KeyboardButton(button1)
 item2 = types.KeyboardButton(button2)
 item3 = types.KeyboardButton(button3)
