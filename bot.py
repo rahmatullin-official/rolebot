@@ -10,11 +10,13 @@ from config import token, item1, item2, item3, item4, item5, item6, item7, item8
 bot = telebot.TeleBot(token)
 bot2 = telebot.TeleBot(my_token)
 opt = 0
+cnt = 0
 my_messages = []
 question = ""
 role_option = ''
 roles = []
 my_id = []
+user_id = ""
 
 
 @bot.message_handler(commands=['start'])
@@ -52,18 +54,16 @@ def echo_message(message):
 
 @bot.message_handler(content_types=['text'])
 def bot_message(message):
-    global my_id
+    global my_id, user_id, cnt
     if message.chat.type == 'private':
         if message.text == button11 or message.text == button1 or message.text == button2 or message.text == button3 \
                 or message.text == button4 or message.text == button7 or message.text == button8 \
                 or message.text == button9 or message.text == button10 or message.text == button111 \
                 or message.text == button12 or message.text == button13 or message.text == button14:
             if message.text == button11:
-                markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-                markup.add(item1, item2, item3, item4, item7)
-                bot.send_message(message.chat.id,
-                                 "{0.first_name}, выберите пожалуйста свою роль".format(message.from_user),
-                                 reply_markup=markup)
+                send = bot.send_message(message.chat.id, 'Напишите id человека, которому хотите выдать роль!')
+                bot.register_next_step_handler(send, users_role)
+                print(user_id)
             elif message.text == button1:
                 add_user_role(button1, message)
             elif message.text == button2:
@@ -105,9 +105,11 @@ def bot_message(message):
                                  "{0.first_name}, выберите действие".format(message.from_user),
                                  reply_markup=markup)
             elif message.text == button5:
-                show_my_roles(message)
+                send = bot.send_message(message.chat.id, 'Напишите id человека, роль которого хотите посмотреть!')
+                bot.register_next_step_handler(send, sr)
             elif message.text == button6:
-                clear_my_roles(message)
+                send = bot.send_message(message.chat.id, 'Напишите id человека, роли которого хотите очистить!')
+                bot.register_next_step_handler(send, сr)
             elif message.text == button7:
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
                 markup.add(item11, item22, item33)
@@ -123,70 +125,72 @@ def bot_message(message):
                 bot.send_message(message.chat.id, 'Другой пользователь уже создает опрос! Пожалуйста подождите.')
         elif message.text[:7].lower() == 'message':
             check_user_role(message)
+        elif message.text == '/users':
+            view_users(message)
 
 
 def add_user_role(role, message):
     if role == button1:
         db = sqlite3.connect('all_users.db')
         sql = db.cursor()
-        sql.execute(f'UPDATE users SET teacher = 1 WHERE id = {message.chat.id}')
+        sql.execute(f'UPDATE users SET teacher = 1 WHERE id = {user_id}')
         db.commit()
-        bot.send_message(message.chat.id, f'Вам присовенна роль - {button1}')
+        bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button1}')
     elif role == button2:
         db = sqlite3.connect('all_users.db')
         sql = db.cursor()
-        sql.execute(f'UPDATE users SET teacher_class = 1 WHERE id = {message.chat.id}')
+        sql.execute(f'UPDATE users SET teacher_class = 1 WHERE id = {user_id}')
         db.commit()
-        bot.send_message(message.chat.id, f'Вам присвоенна роль - {button2}')
+        bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button2}')
     elif role == button3:
         db = sqlite3.connect('all_users.db')
         sql = db.cursor()
-        sql.execute(f'UPDATE users SET adm = 1 WHERE id = {message.chat.id}')
+        sql.execute(f'UPDATE users SET adm = 1 WHERE id = {user_id}')
         db.commit()
-        bot.send_message(message.chat.id, f'Вам присвоеена роль - {button3}')
+        bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button3}')
     elif role == button8:
         db = sqlite3.connect('all_users.db')
         sql = db.cursor()
-        sql.execute(f'UPDATE users SET mkinfmat = 1 WHERE id = {message.chat.id}')
+        sql.execute(f'UPDATE users SET mkinfmat = 1 WHERE id = {user_id}')
         db.commit()
-        bot.send_message(message.chat.id, f'Вам присвоеена роль - {button8}')
+        bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button8}')
     elif role == button9:
         db = sqlite3.connect('all_users.db')
         sql = db.cursor()
-        sql.execute(f'UPDATE users SET mkn = 1 WHERE id = {message.chat.id}')
+        sql.execute(f'UPDATE users SET mkn = 1 WHERE id = {user_id}')
         db.commit()
-        bot.send_message(message.chat.id, f'Вам присвоеена роль - {button9}')
+        bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button9}')
     elif role == button10:
         db = sqlite3.connect('all_users.db')
         sql = db.cursor()
-        sql.execute(f'UPDATE users SET mkiy = 1 WHERE id = {message.chat.id}')
+        sql.execute(f'UPDATE users SET mkiy = 1 WHERE id = {user_id}')
         db.commit()
-        bot.send_message(message.chat.id, f'Вам присвоеена роль - {button10}')
+        bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button10}')
     elif role == button111:
         db = sqlite3.connect('all_users.db')
         sql = db.cursor()
-        sql.execute(f'UPDATE users SET mkfil = 1 WHERE id = {message.chat.id}')
+        sql.execute(f'UPDATE users SET mkfil = 1 WHERE id = {user_id}')
         db.commit()
-        bot.send_message(message.chat.id, f'Вам присвоеена роль - {button111}')
+        bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button111}')
     elif role == button12:
         db = sqlite3.connect('all_users.db')
         sql = db.cursor()
-        sql.execute(f'UPDATE users SET mken = 1 WHERE id = {message.chat.id}')
+        sql.execute(f'UPDATE users SET mken = 1 WHERE id = {user_id}')
         db.commit()
         db.commit()
-        bot.send_message(message.chat.id, f'Вам присвоеена роль - {button12}')
+        bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button12}')
     elif role == button13:
         db = sqlite3.connect('all_users.db')
         sql = db.cursor()
-        sql.execute(f'UPDATE users SET mkfot = 1 WHERE id = {message.chat.id}')
+        sql.execute(f'UPDATE users SET mkfot = 1 WHERE id = {user_id}')
         db.commit()
-        bot.send_message(message.chat.id, f'Вам присвоеена роль - {button13}')
+        bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button13}')
     elif role == button14:
         db = sqlite3.connect('all_users.db')
         sql = db.cursor()
-        sql.execute(f'UPDATE users SET mki = 1 WHERE id = {message.chat.id}')
+        sql.execute(f'UPDATE users SET mki = 1 WHERE id = {user_id}')
         db.commit()
-        bot.send_message(message.chat.id, f'Вам присвоеена роль - {button14}')
+        bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button14}')
     # elif role == button4:
     #     db = sqlite3.connect('all_users.db')
     #     sql = db.cursor()
@@ -205,7 +209,7 @@ def show_my_roles(message):
     db = sqlite3.connect('all_users.db')
     sql = db.cursor()
     sql.execute(
-        f'SELECT teacher,teacher_class,mkinfmat, mkn, mkiy, mkfil, mken, mkfot, mki,adm FROM users WHERE id = {message.chat.id}')
+        f'SELECT teacher,teacher_class,mkinfmat, mkn, mkiy, mkfil, mken, mkfot, mki,adm FROM users WHERE id = {user_id}')
     for i in sql.fetchall():
         for j in i:
             my_roles.append(j)
@@ -214,9 +218,9 @@ def show_my_roles(message):
             output += f'{some_roles[cnt]}, '
         cnt += 1
     if len(output) == 0:
-        bot.send_message(message.chat.id, f'У вас еще нет ролей')
+        bot.send_message(message.chat.id, f'У пользователя еще нет ролей')
     else:
-        bot.send_message(message.chat.id, f'Ваши роли: {output[0:-2]}')
+        bot.send_message(message.chat.id, f'Роли пользователя: {output[0:-2]}')
 
 
 def clear_my_roles(message):
@@ -224,10 +228,10 @@ def clear_my_roles(message):
     sql = db.cursor()
     sql.execute(
         f'UPDATE users SET teacher = 0,teacher_class = 0,mkinfmat = 0, mkn = 0, mkiy = 0, mkfil = 0, mken = 0, mkfot = 0,'
-        f' mki = 0,adm = 0 WHERE id = {message.chat.id}'
+        f' mki = 0,adm = 0 WHERE id = {user_id}'
     )
     db.commit()
-    bot.send_message(message.chat.id, 'Ваши роли успешно очищенны!')
+    bot.send_message(message.chat.id, 'Роли пользователя успешно очищенны!')
 
 
 def check_user_role(message):
@@ -315,6 +319,44 @@ def role_for_option(message):
 
 def role_commands(message):
     bot.send_message(message.chat.id, help_commands)
+
+
+def view_users(message):
+    db = sqlite3.connect('all_users.db')
+    sql = db.cursor()
+    ms = ''
+    sql.execute(
+        f'SELECT id, nick FROM users'
+    )
+    for i in sql.fetchall():
+        ms += f'user nickname: {i[1]} user id: {i[0]} \n'
+    bot.send_message(message.chat.id, ms)
+
+
+def users_role(message):
+    global user_id, cnt
+    user_id = message.text
+    create_keyboard(message)
+
+
+def sr(message):
+    global user_id, cnt
+    user_id = message.text
+    show_my_roles(message)
+
+
+def сr(message):
+    global user_id, cnt
+    user_id = message.text
+    clear_my_roles(message)
+
+
+def create_keyboard(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add(item1, item2, item3, item4, item7)
+    bot.send_message(message.chat.id,
+                     "{0.first_name}, выберите пожалуйста роль пользователя".format(message.from_user),
+                     reply_markup=markup)
 
 
 bot.polling(none_stop=True)

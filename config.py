@@ -1,13 +1,12 @@
 from telebot import types
 import os
 
-token = os.environ.get("my_token")  # your token
 button1 = "учитель"
 button2 = "классный руководитель"
 button3 = "администрация"
 button4 = "мк"
-button5 = "мои роли"
-button6 = "очистить роли"
+button5 = "роли пользователя"
+button6 = "очистить роли пользователя"
 button7 = "Назад"
 button8 = "мк инф + матем"
 button9 = "мк начальной школы"
@@ -16,7 +15,7 @@ button111 = "мк филологи"
 button12 = "мк естесвенные науки"
 button13 = "мк физ-ра, ОБЖ, технолог"
 button14 = "мк истории"
-button11 = "Получить роль"
+button11 = "Выдать роль"
 button22 = "Действия с ролями"
 button33 = "Обращения к ролям"
 button44 = "Создать опрос"
@@ -31,7 +30,8 @@ help_commands = f'@adm роль -> {button3} \n' \
                 f'@mkfot роль -> {button13} \n' \
                 f'@mki роль -> {button14} \n' \
                 f'для отправки сообщения -> message @role text \n' \
-                f'для отправки сообщения нескольким ролям -> message @role @role2 text'
+                f'для отправки сообщения нескольким ролям -> message @role @role2 text \n' \
+                f'для просмотра id пользователей -> /users'
 my_roles = ['adm', 'teacher', 'teacher_class', 'mkinfmat', 'mkn', 'mkiy', 'mkfil', 'mken', 'mkfot', 'mki']
 item1 = types.KeyboardButton(button1)
 item2 = types.KeyboardButton(button2)
