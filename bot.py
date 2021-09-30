@@ -254,7 +254,7 @@ def check_user_role(message):
                 for j in z:
                     users_users.append(j)
         for i in users_users:
-            bot.send_message(i, message.text[find_message:])
+            bot2.send_message(i, message.text[find_message:])
 
 
 def create_question_poll(message):
