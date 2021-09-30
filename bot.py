@@ -5,9 +5,10 @@ from config import token, item1, item2, item3, item4, item5, item6, item7, item8
     item13, item14, item11, item22, item33, item44, button1, button2, button3, \
     button4, button5, button6, button11, button22, button33, button44, button7, button8, button9, button10, button111, \
     button12, \
-    button13, button14, help_commands, my_roles
+    button13, button14, help_commands, my_roles, my_token
 
 bot = telebot.TeleBot(token)
+bot2 = telebot.TeleBot(my_token)
 opt = 0
 my_messages = []
 question = ""
@@ -25,7 +26,6 @@ def start(message):
     bot.send_message(message.chat.id,
                      "Здравсвуйте {0.first_name}!".format(message.from_user),
                      reply_markup=markup)
-    new_user_add(message)
 
 
 @bot.message_handler(func=lambda message: True)
@@ -123,26 +123,6 @@ def bot_message(message):
                 bot.send_message(message.chat.id, 'Другой пользователь уже создает опрос! Пожалуйста подождите.')
         elif message.text[:7].lower() == 'message':
             check_user_role(message)
-
-
-def new_user_add(message):
-    db = sqlite3.connect('all_users.db')
-    sql = db.cursor()
-    sql.execute("""CREATE TABLE IF NOT EXISTS users(
-          id INTEGER, teacher INTEGER, teacher_class INTEGER, mkinfmat INTEGER, mkn INTEGER, mkiy INTEGER, mkfil INTEGER,
-          mken INTEGER, mkfot INTEGER, mki INTEGER, adm INTEGER);
-       """)
-    db.commit()
-
-    people_id = message.chat.id
-    sql.execute(f"SELECT id FROM users WHERE id = {people_id}")
-    data = sql.fetchone()
-    if data:
-        pass
-    else:
-        sql.execute(
-            f"INSERT INTO users(id, teacher, teacher_class, mkinfmat, mkn, mkiy, mkfil, mken, mkfot, mki, adm) VALUES ({people_id}, 0,0,0,0,0,0,0,0,0,0);")
-        db.commit()
 
 
 def add_user_role(role, message):
@@ -297,10 +277,11 @@ def send_poll(message, messages):
         for z in sql.fetchall():
             for j in z:
                 users_roles.append(j)
-    bot.send_poll(users_roles[0], question, messages, False)
+    bot2.send_poll(users_roles[0], question, messages, False)
+    mm = bot2.send_poll(users_roles[0], question, messages, False).message_id
     if len(users_roles) > 1:
         for i in users_roles[1:]:
-            bot.forward_message(i, users_roles[0], message.message_id + 1)
+            bot2.forward_message(i, users_roles[0], mm)
     my_messages = []
     my_id = []
 
@@ -336,7 +317,4 @@ def role_commands(message):
     bot.send_message(message.chat.id, help_commands)
 
 
-try:
-    bot.polling(none_stop=True)
-except Exception:
-    pass
+bot.polling(none_stop=True)
