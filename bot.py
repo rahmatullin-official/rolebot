@@ -5,7 +5,7 @@ from config import token, item1, item2, item3, item4, item5, item6, item7, item8
     item13, item14, item11, item22, item33, item44, button1, button2, button3, \
     button4, button5, button6, button11, button22, button33, button44, button7, button8, button9, button10, button111, \
     button12, \
-    button13, button14, help_commands, my_roles, my_token
+    button13, button14, help_commands, my_roles, my_token, mypass
 
 bot = telebot.TeleBot(token)
 bot2 = telebot.TeleBot(my_token)
@@ -21,13 +21,8 @@ user_id = ""
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-
-    markup.add(item11, item22, item44, item33)
-
-    bot.send_message(message.chat.id,
-                     "Здравсвуйте {0.first_name}!".format(message.from_user),
-                     reply_markup=markup)
+    send = bot.send_message(message.chat.id, 'Для продолжения введите пароль!')
+    bot.register_next_step_handler(send, loggin)
 
 
 @bot.message_handler(func=lambda message: True)
@@ -349,6 +344,25 @@ def сr(message):
     global user_id, cnt
     user_id = message.text
     clear_my_roles(message)
+
+
+def loggin(message):
+    password = message.text
+    if password == mypass:
+        log_in(message)
+    else:
+        bot.send_message(message.chat.id, 'Пароль не верный')
+        start(message)
+
+
+def log_in(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+
+    markup.add(item11, item22, item44, item33)
+
+    bot.send_message(message.chat.id,
+                     "Здравсвуйте {0.first_name}!".format(message.from_user),
+                     reply_markup=markup)
 
 
 def create_keyboard(message):
