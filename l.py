@@ -9,7 +9,7 @@ mybot = telebot.TeleBot(my_token)
 @mybot.message_handler(commands=['start'])
 def start(message):
     mybot.send_message(message.chat.id,
-                       "Здравсвуйте {0.first_name}! NEWS!!".format(message.from_user))
+                       "Здравсвуйте {0.first_name}! Здесь будут появлятся новости и сообщения!".format(message.from_user))
     new_user_add(message)
 
 
