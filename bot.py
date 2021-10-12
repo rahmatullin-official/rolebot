@@ -1,3 +1,4 @@
+import os
 import telebot
 from telebot import types
 import sqlite3
@@ -23,6 +24,40 @@ user_id = ""
 def start(message):
     send = bot.send_message(message.chat.id, 'Для продолжения введите пароль!')
     bot.register_next_step_handler(send, loggin)
+
+
+@bot.message_handler(content_types=['photo'])
+def what_photo(message):
+    print('hi')
+    db = sqlite3.connect('all_users.db')
+    sql = db.cursor()
+    users_users = []
+    some_roles = message.caption.split()[1:]
+    some_roles = [i.replace('@', '') for i in some_roles]
+    message_roles = [i for i in some_roles if i in my_roles]
+    fileID = message.photo[-1].file_id
+    file_info = bot.get_file(fileID)
+    downloaded_file = bot.download_file(file_info.file_path)
+    src = 'D:/PythonProjects/rolebot' + file_info.file_path[7:]
+    with open(src, 'wb') as new_file:
+        new_file.write(downloaded_file)
+    print(message.caption)
+    if len(message_roles) == 0:
+        bot.send_message(message.chat.id, 'Вы неверно указали роль\n'
+                                          'Для вызова списка ролей напишите /help_commands')
+    else:
+        find_message = message.caption.rfind(message_roles[-1]) + len(message_roles[-1]) + 1
+        for i in message_roles:
+            sql.execute(
+                f'SELECT id FROM users WHERE {i} = 1'
+            )
+            for z in sql.fetchall():
+                for j in z:
+                    users_users.append(j)
+        for i in users_users:
+            with open(src, "rb") as file:
+                bot2.send_photo(i, file, message.caption[find_message:])
+        os.remove(src)
 
 
 @bot.message_handler(func=lambda message: True)

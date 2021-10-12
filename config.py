@@ -1,6 +1,4 @@
 from telebot import types
-import os
-
 button1 = "учитель"
 button2 = "классный руководитель"
 button3 = "администрация"
