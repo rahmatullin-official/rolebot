@@ -3,7 +3,7 @@ from telebot import types
 import sqlite3
 from config import my_token
 
-mybot = telebot.TeleBot(my_token)
+mybot = telebot.TeleBot(my_token) # your token
 
 
 @mybot.message_handler(commands=['start'])
