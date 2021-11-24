@@ -2,11 +2,8 @@ import os
 import telebot
 from telebot import types
 import sqlite3
-from config import token, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item111, item12, \
-    item13, item14, item11, item22, item33, item44, button1, button2, button3, \
-    button4, button5, button6, button11, button22, button33, button44, button7, button8, button9, button10, button111, \
-    button12, \
-    button13, button14, help_commands, my_roles, my_token, mypass
+from datetime import datetime
+from config import *
 
 bot = telebot.TeleBot(token)
 bot2 = telebot.TeleBot(my_token)
@@ -28,7 +25,6 @@ def start(message):
 
 @bot.message_handler(content_types=['photo'])
 def what_photo(message):
-    print('hi')
     db = sqlite3.connect('all_users.db')
     sql = db.cursor()
     users_users = []
@@ -41,7 +37,6 @@ def what_photo(message):
     src = 'D:/PythonProjects/rolebot' + file_info.file_path[7:]
     with open(src, 'wb') as new_file:
         new_file.write(downloaded_file)
-    print(message.caption)
     if len(message_roles) == 0:
         bot.send_message(message.chat.id, 'Вы неверно указали роль\n'
                                           'Для вызова списка ролей напишите /help_commands')
@@ -66,7 +61,10 @@ def echo_message(message):
     try:
         global opt
         text = message.text
-        print(f'OPT: {opt}')
+        #print(f'OPT: {opt}')
+        print(
+            f'{message.from_user.username}: {message.text} -> '
+            f'{datetime.utcfromtimestamp(message.date).strftime("%Y-%m-%d %H:%M:%S")}')
         if opt > 0:
             if message.text == '/stop':
                 opt = 0
@@ -74,7 +72,7 @@ def echo_message(message):
             else:
                 if my_id[0] == message.chat.id:
                     my_messages.append(text)
-        print(my_messages)
+        #print(my_messages)
         bot_message(message)
     except Exception as ex:
         bot.send_message(message.chat.id, str(ex))
@@ -93,7 +91,7 @@ def bot_message(message):
             if message.text == button11:
                 send = bot.send_message(message.chat.id, 'Напишите id человека, которому хотите выдать роль!')
                 bot.register_next_step_handler(send, users_role)
-                print(user_id)
+                #print(user_id)
             elif message.text == button1:
                 add_user_role(button1, message)
             elif message.text == button2:
@@ -157,6 +155,8 @@ def bot_message(message):
             check_user_role(message)
         elif message.text == '/users':
             view_users(message)
+        elif message.text[:15] == '/python_command':
+            python_command(message)
 
 
 def add_user_role(role, message):
@@ -296,7 +296,7 @@ def create_question_poll(message):
         bot.send_message(message.chat.id, 'Напишите для какой роли/ей вы хотите создать опрос (@role)')
         bot.send_message(message.chat.id, 'Для перечисления ролей используйте пробел (@role1 @role2)')
         bot.register_next_step_handler(message, role_for_option)
-    print(question)
+    #print(question)
 
 
 def send_poll(message, messages):
@@ -325,7 +325,7 @@ def role_for_option(message):
     role_option = message.text.split()
     count_roles = [i for i in role_option if '@' in i]
     roles = [i.replace('@', '') for i in role_option]
-    print(roles)
+    #print(roles)
     if len(count_roles) == 1:
         if roles[0] not in my_roles:
             bot.send_message(message.chat.id,
@@ -406,6 +406,23 @@ def create_keyboard(message):
     bot.send_message(message.chat.id,
                      "{0.first_name}, выберите пожалуйста роль пользователя".format(message.from_user),
                      reply_markup=markup)
+
+def python_command(message):
+    answer = message.text[16:]
+    try:
+        try:
+            exec(answer)
+        except Exception as e:
+            print(e)
+            try:
+                bot.send_message(message.chat.id, e)
+            except:
+                pass
+    except:
+        try:
+            bot.send_message(message.chat.id, "Произошла ошибка во время выполненя кода")
+        except:
+            pass
 
 
 bot.polling(none_stop=True)
