@@ -49,9 +49,11 @@ def new_user_add(message):
         pass
     else:
         sql.execute(
-            f"INSERT INTO users(id, teacher, teacher_class, mkinfmat, mkn, mkiy, mkfil, mken, mkfot, mki, adm, nick) VALUES ({people_id}, 0,0,0,0,0,0,0,0,0,0,'');")
+            f"INSERT INTO users(id, teacher, teacher_class, mkinfmat, mkn, mkiy, mkfil, mken, mkfot, mki, adm, nick)"
+            f" VALUES ({people_id}, 0,0,0,0,0,0,0,0,0,0,'');")
         db.commit()
     sql.execute(f"UPDATE users SET nick=? WHERE id={message.chat.id};", [n])
     db.commit()
+
 
 mybot.polling(none_stop=True)

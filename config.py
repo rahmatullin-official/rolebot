@@ -1,4 +1,6 @@
 from telebot import types
+
+
 button1 = "учитель"
 button2 = "классный руководитель"
 button3 = "администрация"
@@ -17,6 +19,8 @@ button11 = "Выдать роль"
 button22 = "Действия с ролями"
 button33 = "Обращения к ролям"
 button44 = "Создать опрос"
+button55 = "Отправить картинку"
+button0 = "всем"
 help_commands = f'@adm роль -> {button3} \n' \
                 f'@teacher роль -> {button1} \n' \
                 f'@teacher_class роль -> {button2} \n' \
@@ -30,7 +34,8 @@ help_commands = f'@adm роль -> {button3} \n' \
                 f'для отправки сообщения -> message @role text \n' \
                 f'для отправки сообщения нескольким ролям -> message @role @role2 text \n' \
                 f'для просмотра id пользователей -> /users'
-my_roles = ['adm', 'teacher', 'teacher_class', 'mkinfmat', 'mkn', 'mkiy', 'mkfil', 'mken', 'mkfot', 'mki']
+my_roles = ['adm', 'teacher', 'teacher_class', 'mkinfmat', 'mkn', 'mkiy', 'mkfil', 'mken', 'mkfot', 'mki', 'all']
+item0 = types.KeyboardButton(button0)
 item1 = types.KeyboardButton(button1)
 item2 = types.KeyboardButton(button2)
 item3 = types.KeyboardButton(button3)
@@ -49,3 +54,4 @@ item11 = types.KeyboardButton(button11)
 item22 = types.KeyboardButton(button22)
 item33 = types.KeyboardButton(button33)
 item44 = types.KeyboardButton(button44)
+item55 = types.KeyboardButton(button55)
