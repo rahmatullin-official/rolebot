@@ -1,5 +1,8 @@
 from telebot import types
 
+token = 'mytoken'
+my_token = 'mytoken'
+mypass = 'mypass'
 
 button1 = "учитель"
 button2 = "классный руководитель"
