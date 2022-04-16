@@ -4,6 +4,7 @@ from telebot import types
 import sqlite3
 from datetime import datetime
 from config import *
+import time
 
 # bot tokens
 bot = telebot.TeleBot(token)
@@ -19,6 +20,7 @@ roles = []
 my_id = []
 user_id = ""
 role = ""
+old_roles = []
 
 # global values to add history messages to roles
 # history_messages_all = []
@@ -35,17 +37,25 @@ role = ""
 
 # keys for chat and history upd
 keys_for_chat = {
-    'all': "yourchatnumber",
-    'teacher': "yourchatnumber",
-    'teacher_class': "yourchatnumber",
-    'adm': "yourchatnumber",
-    'mkinfmat': "yourchatnumber",
-    'mkn': "yourchatnumber",
-    'mkiy': "yourchatnumber",
-    'mkfil': "yourchatnumber",
-    'mken': "yourchatnumber",
-    'mkfot': "yourchatnumber",
-    'mki': "yourchatnumber",
+    'all': -1001606281501,
+    'teacher': -1001690957601,
+    'teacher_class': -1001686801828,
+    'adm': -1001729571699,
+    'mkinfmat': -1001511474725,
+    'mkn': -1001658087867,
+    'mkiy': -1001517694158,
+    'mkfil': -1001635335948,
+    'mken': -1001260170139,
+    'mkfot': -1001609616531,
+    'mki': -1001356109325,
+    'tc5': -1001563191718,
+    'tc6': -1001756242350,
+    'tc7': -1001304608456,
+    'tc8': -1001517360969,
+    'tc9': -1001618046500,
+    'tc10': -1001533803285,
+    'tc11': -1001764058578,
+    'mk_boss': -1001557273378,
 }
 history_upd = {
     'all': 'history_all',
@@ -58,7 +68,15 @@ history_upd = {
     'mkfil': 'history_mkfil',
     'mken': 'history_mken',
     'mkfot': 'history_mkfot',
-    'mki': 'history_mki'
+    'mki': 'history_mki',
+    'tc5': 'history_tc5',
+    'tc6': 'history_tc6',
+    'tc7': 'history_tc7',
+    'tc8': 'history_tc8',
+    'tc9': 'history_tc9',
+    'tc10': 'history_tc10',
+    'tc11': 'history_tc11',
+    'mk_boss': 'history_mk_boss',
 }
 
 try:
@@ -92,7 +110,7 @@ try:
         fileID = message.photo[-1].file_id
         file_info = bot.get_file(fileID)
         downloaded_file = bot.download_file(file_info.file_path)
-        src = 'C:/Users/uch/Desktop/rolebot_1/images' + file_info.file_path[7:]
+        src = 'C:/Users/Администратор/Desktop/rolebot_beta/images/' + file_info.file_path[7:]
         # src = 'D:/PythonProjects/rolebot' + file_info.file_path[7:]
         with open(src, 'wb') as new_file:
             new_file.write(downloaded_file)
@@ -147,10 +165,27 @@ try:
                         update_history('mkfot', mm)
                     elif keys_for_chat['mki'] == chat_id:
                         update_history('mki', mm)
+                    elif keys_for_chat['tc5'] == chat_id:
+                        update_history('tc5', mm)
+                    elif keys_for_chat['tc6'] == chat_id:
+                        update_history('tc6', mm)
+                    elif keys_for_chat['tc7'] == chat_id:
+                        update_history('tc7', mm)
+                    elif keys_for_chat['tc8'] == chat_id:
+                        update_history('tc8', mm)
+                    elif keys_for_chat['tc9'] == chat_id:
+                        update_history('tc9', mm)
+                    elif keys_for_chat['tc10'] == chat_id:
+                        update_history('tc10', mm)
+                    elif keys_for_chat['tc11'] == chat_id:
+                        update_history('tc11', mm)
+                    elif keys_for_chat['mk_boss'] == chat_id:
+                        update_history('mk_boss', mm)
+
                         # bot2.send_photo(i, file)
                         # message.caption[find_message:]
             bot.send_message(message.chat.id, 'Картинка была успешно отправленна пользователям!')
-            os.remove(src)
+            # os.remove(src)
 
 
     @bot.message_handler(func=lambda message: True)
@@ -185,7 +220,9 @@ try:
             if message.text == button11 or message.text == button1 or message.text == button2 or message.text == button3 \
                     or message.text == button4 or message.text == button7 or message.text == button8 \
                     or message.text == button9 or message.text == button10 or message.text == button111 \
-                    or message.text == button12 or message.text == button13 or message.text == button14:
+                    or message.text == button12 or message.text == button13 or message.text == button14 or message.text == button15 \
+                    or message.text == button16 or message.text == button17 or message.text == button18 or message.text == button19 \
+                    or message.text == button20 or message.text == button21 or message.text == mk_boss:
                 if message.text == button11:
                     send = bot.send_message(message.chat.id, 'Напишите id человека, которому хотите выдать роль!')
                     bot.register_next_step_handler(send, users_role)
@@ -193,7 +230,11 @@ try:
                 elif message.text == button1:
                     add_user_role(button1, message)
                 elif message.text == button2:
-                    add_user_role(button2, message)
+                    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+                    markup.add(item15, item16, item17, item18, item19, item20, item21, item7)
+                    bot.send_message(message.chat.id,
+                                     "{0.first_name}, выберите пожалуйста параллель".format(message.from_user),
+                                     reply_markup=markup)
                 elif message.text == button3:
                     add_user_role(button3, message)
                 elif message.text == button4 or message.text == button8 or message.text == button9 \
@@ -201,24 +242,40 @@ try:
                         or message.text == button13 or message.text == button14:
                     if message.text == button4:
                         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-                        markup.add(item8, item9, item10, item111, item12, item13, item14, item7)
+                        markup.add(item8, item9, item10, item111, item12, item13, item14, item_mkboss, item7)
                         bot.send_message(message.chat.id,
                                          "{0.first_name}, выберите пожалуйста категорию мк".format(message.from_user),
                                          reply_markup=markup)
-                    elif message.text == button8:
-                        add_user_role(button8, message)
-                    elif message.text == button9:
-                        add_user_role(button9, message)
-                    elif message.text == button10:
-                        add_user_role(button10, message)
-                    elif message.text == button111:
-                        add_user_role(button111, message)
-                    elif message.text == button12:
-                        add_user_role(button12, message)
-                    elif message.text == button13:
-                        add_user_role(button13, message)
-                    elif message.text == button14:
-                        add_user_role(button14, message)
+                elif message.text == button8:
+                    add_user_role(button8, message)
+                elif message.text == button9:
+                    add_user_role(button9, message)
+                elif message.text == button10:
+                    add_user_role(button10, message)
+                elif message.text == button111:
+                    add_user_role(button111, message)
+                elif message.text == button12:
+                    add_user_role(button12, message)
+                elif message.text == button13:
+                    add_user_role(button13, message)
+                elif message.text == button14:
+                    add_user_role(button14, message)
+                elif message.text == button15:
+                    add_user_role(button15, message)
+                elif message.text == button16:
+                    add_user_role(button16, message)
+                elif message.text == button17:
+                    add_user_role(button17, message)
+                elif message.text == button18:
+                    add_user_role(button18, message)
+                elif message.text == button19:
+                    add_user_role(button19, message)
+                elif message.text == button20:
+                    add_user_role(button20, message)
+                elif message.text == button21:
+                    add_user_role(button21, message)
+                elif message.text == mk_boss:
+                    add_user_role(mk_boss, message)
                 elif message.text == button7:
                     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
                     markup.add(item11, item22, item44, item33, item55)
@@ -265,13 +322,13 @@ try:
             db.commit()
             forward_role_messages(message, "teacher")
             bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button1}')
-        elif role == button2:
-            db = sqlite3.connect('all_users.db')
-            sql = db.cursor()
-            sql.execute(f'UPDATE users SET teacher_class = 1 WHERE id = {user_id}')
-            forward_role_messages(message, "teacher_class")
-            db.commit()
-            bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button2}')
+        # elif role == button2:
+        #     db = sqlite3.connect('all_users.db')
+        #     sql = db.cursor()
+        #     sql.execute(f'UPDATE users SET teacher_class = 1 WHERE id = {user_id}')
+        #     forward_role_messages(message, "teacher_class")
+        #     db.commit()
+        #     bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button2}')
         elif role == button3:
             db = sqlite3.connect('all_users.db')
             sql = db.cursor()
@@ -328,6 +385,62 @@ try:
             db.commit()
             forward_role_messages(message, "mki")
             bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button14}')
+        elif role == button15:
+            db = sqlite3.connect('all_users.db')
+            sql = db.cursor()
+            sql.execute(f'UPDATE users SET tc5 = 1 WHERE id = {user_id}')
+            db.commit()
+            forward_role_messages(message, "tc5")
+            bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button15}')
+        elif role == button16:
+            db = sqlite3.connect('all_users.db')
+            sql = db.cursor()
+            sql.execute(f'UPDATE users SET tc6 = 1 WHERE id = {user_id}')
+            db.commit()
+            forward_role_messages(message, "tc6")
+            bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button16}')
+        elif role == button17:
+            db = sqlite3.connect('all_users.db')
+            sql = db.cursor()
+            sql.execute(f'UPDATE users SET tc7 = 1 WHERE id = {user_id}')
+            db.commit()
+            forward_role_messages(message, "tc7")
+            bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button17}')
+        elif role == button18:
+            db = sqlite3.connect('all_users.db')
+            sql = db.cursor()
+            sql.execute(f'UPDATE users SET tc8 = 1 WHERE id = {user_id}')
+            db.commit()
+            forward_role_messages(message, "tc8")
+            bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button18}')
+        elif role == button19:
+            db = sqlite3.connect('all_users.db')
+            sql = db.cursor()
+            sql.execute(f'UPDATE users SET tc9 = 1 WHERE id = {user_id}')
+            db.commit()
+            forward_role_messages(message, "tc9")
+            bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button19}')
+        elif role == button20:
+            db = sqlite3.connect('all_users.db')
+            sql = db.cursor()
+            sql.execute(f'UPDATE users SET tc10 = 1 WHERE id = {user_id}')
+            db.commit()
+            forward_role_messages(message, "tc10")
+            bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button20}')
+        elif role == button21:
+            db = sqlite3.connect('all_users.db')
+            sql = db.cursor()
+            sql.execute(f'UPDATE users SET tc11 = 1 WHERE id = {user_id}')
+            db.commit()
+            forward_role_messages(message, "tc11")
+            bot.send_message(message.chat.id, f'Пользователю присвоена роль - {button21}')
+        elif role == mk_boss:
+            db = sqlite3.connect('all_users.db')
+            sql = db.cursor()
+            sql.execute(f'UPDATE users SET mk_boss = 1 WHERE id = {user_id}')
+            db.commit()
+            forward_role_messages(message, "mk_boss")
+            bot.send_message(message.chat.id, f'Пользователю присвоена роль - {mk_boss}')
         # elif role == button4:
         #     db = sqlite3.connect('all_users.db')
         #     sql = db.cursor()
@@ -343,12 +456,16 @@ try:
             some_roles = ['учитель', 'классный руководитель', 'мк инф + матем', 'мк начальной школы',
                           'мк иностранные яз',
                           'мк филологи', 'мк естесвенные науки',
-                          'мк физ-ра, ОБЖ, технолог', 'мк истории', 'администрация']
+                          'мк физ-ра, ОБЖ, технолог', 'мк истории', 'администрация', 'классный руководитель5',
+                          'классный руководитель6', 'классный руководитель7',
+                          'классный руководитель8', 'классный руководитель9', 'классный руководитель10',
+                          'классный руководитель11', 'руководитель мк']
             my_roles = []
             db = sqlite3.connect('all_users.db')
             sql = db.cursor()
             sql.execute(
-                f'SELECT teacher,teacher_class,mkinfmat, mkn, mkiy, mkfil, mken, mkfot, mki,adm FROM users WHERE id = {user_id}')
+                f'SELECT teacher,teacher_class,mkinfmat, mkn, mkiy, mkfil, mken, mkfot, mki,adm, tc5, tc6, tc7, tc8, tc9, tc10'
+                f',tc11, mk_boss FROM users WHERE id = {user_id}')
             for i in sql.fetchall():
                 for j in i:
                     my_roles.append(j)
@@ -369,8 +486,8 @@ try:
         db = sqlite3.connect('all_users.db')
         sql = db.cursor()
         sql.execute(
-            f'UPDATE users SET teacher = 0,teacher_class = 0,mkinfmat = 0, mkn = 0, mkiy = 0, mkfil = 0, mken = 0, mkfot = 0,'
-            f' mki = 0,adm = 0 WHERE id = {user_id}'
+            f'UPDATE users SET teacher = 0,teacher_class = 0,mkinfmat = 0, mkn = 0, mkiy = 0, mkfil = 0, mken = 0, mkfot = 0, tc5 = 0,'
+            f' mki = 0,adm = 0, tc6 = 0, tc7 = 0, tc8 = 0, tc9 = 0, tc10 = 0, tc11 = 0, mk_boss = 0 WHERE id = {user_id}'
         )
         db.commit()
         bot.send_message(message.chat.id, 'Роли пользователя успешно очищенны!')
@@ -430,7 +547,7 @@ try:
             db_roles = sql.execute(
                 f'SELECT id FROM users'
             )
-            chat_id = "your chat id"
+            chat_id = -1001606281501
             for z in sql.fetchall():
                 for j in z:
                     users_roles.append(j)
@@ -475,6 +592,23 @@ try:
                 update_history('mkfot', mm)
             elif keys_for_chat['mki'] == chat_id:
                 update_history('mki', mm)
+            elif keys_for_chat['tc5'] == chat_id:
+                update_history('tc5', mm)
+            elif keys_for_chat['tc6'] == chat_id:
+                update_history('tc6', mm)
+            elif keys_for_chat['tc7'] == chat_id:
+                update_history('tcc7', mm)
+            elif keys_for_chat['tc8'] == chat_id:
+                update_history('tc8', mm)
+            elif keys_for_chat['tc9'] == chat_id:
+                update_history('tc9', mm)
+            elif keys_for_chat['tc10'] == chat_id:
+                update_history('tc10', mm)
+            elif keys_for_chat['tc11'] == chat_id:
+                update_history('tc11', mm)
+            elif keys_for_chat['mk_boss'] == chat_id:
+                update_history('mk_boss', mm)
+
             my_messages = []
             my_id = []
 
@@ -521,7 +655,12 @@ try:
             f'SELECT id, nick FROM users'
         )
         for i in sql.fetchall():
-            ms += f'user nickname: {i[1]} user id: {i[0]} \n'
+            if len(ms) < 4050:
+                ms += f'user nickname: {i[1]} user id: {i[0]} \n'
+                print(len(ms))
+            else:
+                bot.send_message(message.chat.id, ms)
+                ms = ''
         bot.send_message(message.chat.id, ms)
 
 
@@ -758,6 +897,126 @@ try:
                 bot2.forward_message(i, chat_id, mm)
             update_history("mki", mm)
             bot.send_message(message.chat.id, f'Сообщение успешно отправленно пользователям!')
+        elif role == "@tc5":
+            chat_id = keys_for_chat['tc5']
+            mm = bot2.send_message(chat_id, my_message).message_id
+            db = sqlite3.connect('all_users.db')
+            sql = db.cursor()
+            sql.execute(
+                f'SELECT id FROM users WHERE tc5 = 1'
+            )
+            for z in sql.fetchall():
+                for j in z:
+                    users_users.append(j)
+            for i in users_users:
+                bot2.forward_message(i, chat_id, mm)
+            update_history("tc5", mm)
+            bot.send_message(message.chat.id, f'Сообщение успешно отправленно пользователям!')
+        elif role == "@tc6":
+            chat_id = keys_for_chat['tc6']
+            mm = bot2.send_message(chat_id, my_message).message_id
+            db = sqlite3.connect('all_users.db')
+            sql = db.cursor()
+            sql.execute(
+                f'SELECT id FROM users WHERE tc6 = 1'
+            )
+            for z in sql.fetchall():
+                for j in z:
+                    users_users.append(j)
+            for i in users_users:
+                bot2.forward_message(i, chat_id, mm)
+            update_history("tc6", mm)
+            bot.send_message(message.chat.id, f'Сообщение успешно отправленно пользователям!')
+        elif role == "@tc7":
+            chat_id = keys_for_chat['tc7']
+            mm = bot2.send_message(chat_id, my_message).message_id
+            db = sqlite3.connect('all_users.db')
+            sql = db.cursor()
+            sql.execute(
+                f'SELECT id FROM users WHERE tc7 = 1'
+            )
+            for z in sql.fetchall():
+                for j in z:
+                    users_users.append(j)
+            for i in users_users:
+                bot2.forward_message(i, chat_id, mm)
+            update_history("tc7", mm)
+            bot.send_message(message.chat.id, f'Сообщение успешно отправленно пользователям!')
+        elif role == "@tc8":
+            chat_id = keys_for_chat['tc8']
+            mm = bot2.send_message(chat_id, my_message).message_id
+            db = sqlite3.connect('all_users.db')
+            sql = db.cursor()
+            sql.execute(
+                f'SELECT id FROM users WHERE tc8 = 1'
+            )
+            for z in sql.fetchall():
+                for j in z:
+                    users_users.append(j)
+            for i in users_users:
+                bot2.forward_message(i, chat_id, mm)
+            update_history("tc8", mm)
+            bot.send_message(message.chat.id, f'Сообщение успешно отправленно пользователям!')
+        elif role == "@tc9":
+            chat_id = keys_for_chat['tc9']
+            mm = bot2.send_message(chat_id, my_message).message_id
+            db = sqlite3.connect('all_users.db')
+            sql = db.cursor()
+            sql.execute(
+                f'SELECT id FROM users WHERE tc9 = 1'
+            )
+            for z in sql.fetchall():
+                for j in z:
+                    users_users.append(j)
+            for i in users_users:
+                bot2.forward_message(i, chat_id, mm)
+            update_history("tc9", mm)
+            bot.send_message(message.chat.id, f'Сообщение успешно отправленно пользователям!')
+        elif role == "@tc10":
+            chat_id = keys_for_chat['tc10']
+            mm = bot2.send_message(chat_id, my_message).message_id
+            db = sqlite3.connect('all_users.db')
+            sql = db.cursor()
+            sql.execute(
+                f'SELECT id FROM users WHERE tc10 = 1'
+            )
+            for z in sql.fetchall():
+                for j in z:
+                    users_users.append(j)
+            for i in users_users:
+                bot2.forward_message(i, chat_id, mm)
+            update_history("tc10", mm)
+            bot.send_message(message.chat.id, f'Сообщение успешно отправленно пользователям!')
+        elif role == "@tc11":
+            chat_id = keys_for_chat['tc11']
+            mm = bot2.send_message(chat_id, my_message).message_id
+            db = sqlite3.connect('all_users.db')
+            sql = db.cursor()
+            sql.execute(
+                f'SELECT id FROM users WHERE tc11 = 1'
+            )
+            for z in sql.fetchall():
+                for j in z:
+                    users_users.append(j)
+            for i in users_users:
+                bot2.forward_message(i, chat_id, mm)
+            update_history("tc11", mm)
+            bot.send_message(message.chat.id, f'Сообщение успешно отправленно пользователям!')
+        elif role == "@mk_boss":
+            chat_id = keys_for_chat['mk_boss']
+            mm = bot2.send_message(chat_id, my_message).message_id
+            db = sqlite3.connect('all_users.db')
+            sql = db.cursor()
+            sql.execute(
+                f'SELECT id FROM users WHERE mk_boss = 1'
+            )
+            for z in sql.fetchall():
+                for j in z:
+                    users_users.append(j)
+            for i in users_users:
+                bot2.forward_message(i, chat_id, mm)
+            update_history("mk_boss", mm)
+            bot.send_message(message.chat.id, f'Сообщение успешно отправленно пользователям!')
 
 
     def last_message(message):
@@ -794,6 +1053,42 @@ try:
             role = "@mki"
             bot.send_message(message.chat.id, "Напишите нужный текст")
             bot.register_next_step_handler(message, last_message)
+        elif message.text == mk_boss:
+            role = "@mk_boss"
+            bot.send_message(message.chat.id, "Напишите нужный текст")
+            bot.register_next_step_handler(message, last_message)
+        elif message.text == button7:
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            markup.add(item11, item22, item33, item44, item55)
+            bot.send_message(message.chat.id, "Вы вернулись в главное меню", reply_markup=markup)
+
+
+    def teacher_class_check_photo(message):
+        global role
+        if message.text == button15:
+            role = "tc5"
+            bot.send_message(message.chat.id, "Отправте нужную фотографию")
+        elif message.text == button16:
+            role = "tc6"
+            bot.send_message(message.chat.id, "Отправте нужную фотографию")
+        elif message.text == button17:
+            role = "tc7"
+            bot.send_message(message.chat.id, "Отправте нужную фотографию")
+        elif message.text == button18:
+            role = "tc8"
+            bot.send_message(message.chat.id, "Отправте нужную фотографию")
+        elif message.text == button19:
+            role = "tc9"
+            bot.send_message(message.chat.id, "Отправте нужную фотографию")
+        elif message.text == button20:
+            role = "tc10"
+            bot.send_message(message.chat.id, "Отправте нужную фотографию")
+        elif message.text == button21:
+            role = "tc11"
+            bot.send_message(message.chat.id, "Отправте нужную фотографию")
+        elif message.text == button222:
+            role = "teacher_class"
+            bot.send_message(message.chat.id, "Отправте нужную фотографию")
         elif message.text == button7:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
             markup.add(item11, item22, item33, item44, item55)
@@ -823,6 +1118,9 @@ try:
         elif message.text == button14:
             role = "mki"
             bot.send_message(message.chat.id, "Отправте нужную фотографию")
+        elif message.text == mk_boss:
+            role = "mk_boss"
+            bot.send_message(message.chat.id, "Отправте нужную фотографию")
         elif message.text == button7:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
             markup.add(item11, item22, item33, item44, item55)
@@ -840,16 +1138,22 @@ try:
             bot.send_message(message.chat.id, "Напишите нужный текст")
             bot.register_next_step_handler(message, last_message)
         elif message.text == "классный руководитель":
-            role = "@teacher_class"
-            bot.send_message(message.chat.id, "Напишите нужный текст")
-            bot.register_next_step_handler(message, last_message)
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            markup.add(item15, item16, item17, item18, item19, item20, item21, item222, item7)
+            bot.send_message(message.chat.id,
+                             "{0.first_name}, выберите пожалуйста параллель".format(message.from_user),
+                             reply_markup=markup)
+            bot.register_next_step_handler(message, teacher_class_check)
+            # role = "@teacher_class"
+            # bot.send_message(message.chat.id, "Напишите нужный текст")
+            # bot.register_next_step_handler(message, last_message)
         elif message.text == "администрация":
             role = "@adm"
             bot.send_message(message.chat.id, "Напишите нужный текст")
             bot.register_next_step_handler(message, last_message)
         elif message.text == button4:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            markup.add(item8, item9, item10, item111, item12, item13, item14, item7)
+            markup.add(item8, item9, item10, item111, item12, item13, item14, mk_boss, item7)
             bot.send_message(message.chat.id,
                              "{0.first_name}, выберите пожалуйста категорию мк".format(message.from_user),
                              reply_markup=markup)
@@ -859,6 +1163,35 @@ try:
             markup.add(item11, item22, item33, item44, item55)
             bot.send_message(message.chat.id, "Вы вернулись в главное меню", reply_markup=markup)
         print(message.text)
+
+
+    def teacher_class_check_option(message):
+        global role
+        if message.text == button15:
+            role = "tc5"
+            bot.register_next_step_handler(message, role_for_option)
+        elif message.text == button16:
+            role = "tc6"
+            bot.register_next_step_handler(message, role_for_option)
+        elif message.text == button17:
+            role = "tc7"
+            bot.register_next_step_handler(message, role_for_option)
+        elif message.text == button18:
+            role = "tc8"
+            bot.register_next_step_handler(message, role_for_option)
+        elif message.text == button19:
+            role = "tc9"
+            bot.register_next_step_handler(message, role_for_option)
+        elif message.text == button20:
+            role = "tc10"
+            bot.register_next_step_handler(message, role_for_option)
+        elif message.text == button21:
+            role = "tc11"
+            bot.register_next_step_handler(message, role_for_option)
+        elif message.text == button7:
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            markup.add(item11, item22, item33, item44, item55)
+            bot.send_message(message.chat.id, "Вы вернулись в главное меню", reply_markup=markup)
 
 
     def mk_check_option(message):
@@ -884,6 +1217,49 @@ try:
         elif message.text == button14:
             role = "mki"
             bot.register_next_step_handler(message, role_for_option)
+        elif message.text == mk_boss:
+            role = "mk_boss"
+            bot.register_next_step_handler(message, role_for_option)
+        elif message.text == button7:
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            markup.add(item11, item22, item33, item44, item55)
+            bot.send_message(message.chat.id, "Вы вернулись в главное меню", reply_markup=markup)
+
+
+    def teacher_class_check(message):
+        global role
+        if message.text == button15:
+            role = "@tc5"
+            bot.send_message(message.chat.id, "Напишите нужный текст")
+            bot.register_next_step_handler(message, last_message)
+        elif message.text == button16:
+            role = "@tc6"
+            bot.send_message(message.chat.id, "Напишите нужный текст")
+            bot.register_next_step_handler(message, last_message)
+        elif message.text == button17:
+            role = "@tc7"
+            bot.send_message(message.chat.id, "Напишите нужный текст")
+            bot.register_next_step_handler(message, last_message)
+        elif message.text == button18:
+            role = "@tc8"
+            bot.send_message(message.chat.id, "Напишите нужный текст")
+            bot.register_next_step_handler(message, last_message)
+        elif message.text == button19:
+            role = "@tc9"
+            bot.send_message(message.chat.id, "Напишите нужный текст")
+            bot.register_next_step_handler(message, last_message)
+        elif message.text == button20:
+            role = "@tc10"
+            bot.send_message(message.chat.id, "Напишите нужный текст")
+            bot.register_next_step_handler(message, last_message)
+        elif message.text == button21:
+            role = "@tc11"
+            bot.send_message(message.chat.id, "Напишите нужный текст")
+            bot.register_next_step_handler(message, last_message)
+        elif message.text == button222:
+            role = "@teacher_class"
+            bot.send_message(message.chat.id, "Напишите нужный текст")
+            bot.register_next_step_handler(message, last_message)
         elif message.text == button7:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
             markup.add(item11, item22, item33, item44, item55)
@@ -900,13 +1276,14 @@ try:
             bot.register_next_step_handler(message, role_for_option)
         elif message.text == "классный руководитель":
             role = "teacher_class"
-            bot.register_next_step_handler(message, role_for_option)
+            bot.register_next_step_handler(message, teacher_class_check_option)
+            # bot.register_next_step_handler(message, role_for_option)
         elif message.text == "администрация":
             role = "adm"
             bot.register_next_step_handler(message, role_for_option)
         elif message.text == button4:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            markup.add(item8, item9, item10, item111, item12, item13, item14, item7)
+            markup.add(item8, item9, item10, item111, item12, item13, item14, mk_boss, item7)
             bot.send_message(message.chat.id,
                              "{0.first_name}, выберите пожалуйста категорию мк".format(message.from_user),
                              reply_markup=markup)
@@ -926,20 +1303,23 @@ try:
             role = "teacher"
             bot.send_message(message.chat.id, "Отправте нужную фотографию")
         elif message.text == "классный руководитель":
-            role = "teacher_class"
-            bot.send_message(message.chat.id, "Отправте нужную фотографию")
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            markup.add(item15, item16, item17, item18, item19, item20, item21, item7)
+            bot.send_message(message.chat.id,
+                             "{0.first_name}, выберите пожалуйста категорию мк".format(message.from_user),
+                             reply_markup=markup)
+            bot.register_next_step_handler(message, teacher_class_check_photo)
         elif message.text == "администрация":
             role = "adm"
             bot.send_message(message.chat.id, "Отправте нужную фотографию")
         elif message.text == button4:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            markup.add(item8, item9, item10, item111, item12, item13, item14, item7)
+            markup.add(item8, item9, item10, item111, item12, item13, item14, mk_boss, item7)
             bot.send_message(message.chat.id,
                              "{0.first_name}, выберите пожалуйста категорию мк".format(message.from_user),
                              reply_markup=markup)
             bot.register_next_step_handler(message, mk_check_photo)
         elif message.text == button7:
-
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
             markup.add(item11, item22, item33, item44, item55)
             bot.send_message(message.chat.id, "Вы вернулись в главное меню", reply_markup=markup)
@@ -960,15 +1340,17 @@ try:
 
 
     def forward_role_messages(message, role):
-        messages_list = []
-        db = sqlite3.connect('history_roles.db')
-        sql = db.cursor()
-        sql.execute(f'SELECT id FROM {history_upd[role]}')
-        for z in sql.fetchall():
-            for j in z:
-                messages_list.append(j)
-        for i in messages_list:
-            bot2.forward_message(message.chat.id, keys_for_chat[role], i)
+        pass
+        # global old_roles
+        # messages_list = []
+        # db = sqlite3.connect('history_roles.db')
+        # sql = db.cursor()
+        # sql.execute(f'SELECT id FROM {history_upd[role]}')
+        # for z in sql.fetchall():
+        #     for j in z:
+        #         messages_list.append(j)
+        # for i in messages_list:
+        #     bot2.forward_message(message.chat.id, keys_for_chat[role], i)
 
 
     def update_history(role, mm):
@@ -996,4 +1378,10 @@ try:
 except Exception as ex:
     print(ex)
 
-bot.polling(none_stop=True)
+while True:
+    try:
+        bot.polling(none_stop=False)
+        time.sleep(0.3)
+    except Exception as e:
+        print(e)
+        time.sleep(15)
